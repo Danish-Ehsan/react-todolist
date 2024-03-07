@@ -1,7 +1,7 @@
-import { ListViewState } from "../types";
+import { ViewState } from "../types";
 
 type AllListsProps = {
-  onSetView: React.Dispatch<React.SetStateAction<ListViewState>>;
+  onSetView: React.Dispatch<React.SetStateAction<ViewState>>;
   onListChange: React.Dispatch<React.SetStateAction<number>>;
 };
 
