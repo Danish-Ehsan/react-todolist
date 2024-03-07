@@ -1,1 +1,1 @@
-export type ListViewState = "allLists" | "singleList";
+export type ViewState = "allLists" | "singleList";
