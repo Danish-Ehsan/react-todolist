@@ -27,7 +27,7 @@ export const todoLists = [
   },
   {
     listName: "Chores",
-    id: 1,
+    id: 2,
     listItems: [
       {
         itemName: "Clean the house",
