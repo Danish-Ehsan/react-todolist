@@ -7,10 +7,18 @@ import { todoLists as initialTodos } from "./data";
 
 function App() {
   const [view, setView] = useState<ViewState>("allLists");
-  const [currentListId, setCurrentListId] = useState(0);
+  const [currentListId, setCurrentListId] = useState<null | number>(null);
   const [todosList, setTodosList] = useState<TodosList>(initialTodos);
 
-  return <>{view === "allLists" ? <AllLists onSetView={setView} onListChange={setCurrentListId} todosList={todosList} /> : <List onSetView={setView} listId={currentListId} />}</>;
+  const currentList = function () {
+    if (currentListId !== null) {
+      return todosList.find((todoList) => todoList.id === currentListId);
+    } else {
+      return todosList.find((todoList) => todoList.id === 1);
+    }
+  };
+
+  return <>{view === "allLists" ? <AllLists onSetView={setView} onListSet={setCurrentListId} todosList={todosList} /> : <List onSetView={setView} list={currentList()} onListChange={setTodosList} />}</>;
 }
 
 export default App;

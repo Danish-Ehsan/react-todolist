@@ -2,17 +2,17 @@ import { ViewState, TodosList } from "../types";
 
 type AllListsProps = {
   onSetView: React.Dispatch<React.SetStateAction<ViewState>>;
-  onListChange: React.Dispatch<React.SetStateAction<number>>;
+  onListSet: React.Dispatch<React.SetStateAction<number | null>>;
   todosList: TodosList;
 };
 
-export default function AllLists({ onSetView, onListChange, todosList }: AllListsProps) {
+export default function AllLists({ onSetView, onListSet, todosList }: AllListsProps) {
   const todosElements = todosList.map((todoList) => {
     return (
       <button
         onClick={() => {
           onSetView("singleList");
-          onListChange(todoList.id);
+          onListSet(todoList.id);
         }}
       >
         {todoList.listName}

@@ -1,21 +1,42 @@
-import { ViewState } from "../types";
+import { ViewState, TodoList, TodosList } from "../types";
 
 type listProps = {
-  listId: number;
   onSetView: React.Dispatch<React.SetStateAction<ViewState>>;
+  list: TodoList | undefined;
+  onListChange: React.Dispatch<React.SetStateAction<TodosList>>;
 };
 
-export default function List({ listId, onSetView }: listProps) {
+export default function List({ list, onSetView, onListChange }: listProps) {
+  const handleListTitleChange = (newTitle: string) => {
+    onListChange((AllLists) => {
+      const newLists = AllLists.map((currentList) => {
+        if (list !== undefined && currentList.id === list.id) {
+          return {
+            ...currentList,
+            listName: newTitle,
+          };
+        } else {
+          return currentList;
+        }
+      });
+
+      return newLists;
+    });
+  };
+
   return (
     <>
       <div>This is a single List</div>
-      <button
-        onClick={() => {
-          onSetView("allLists");
+      <input
+        type="text"
+        value={list?.listName}
+        onChange={(e) => {
+          handleListTitleChange(e.target.value);
         }}
-      >
-        Back to All Lists
-      </button>
+      />
+      <div>
+        <button onClick={() => onSetView("allLists")}>Show All Lists</button>
+      </div>
     </>
   );
 }

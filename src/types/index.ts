@@ -9,3 +9,13 @@ export type TodosList = {
     completed: boolean;
   }[];
 }[];
+
+export type TodoList = {
+  listName: string;
+  id: number;
+  listItems: {
+    itemName: string;
+    id: number;
+    completed: boolean;
+  }[];
+};
