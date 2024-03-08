@@ -8,9 +8,9 @@ import { todoLists as initialTodos } from "./data";
 function App() {
   const [view, setView] = useState<ViewState>("allLists");
   const [currentListId, setCurrentListId] = useState(0);
-  const [todoList, setTodoList] = useState<TodosList>(initialTodos);
+  const [todosList, setTodosList] = useState<TodosList>(initialTodos);
 
-  return <>{view === "allLists" ? <AllLists onSetView={setView} onListChange={setCurrentListId} /> : <List onSetView={setView} listId={currentListId} />}</>;
+  return <>{view === "allLists" ? <AllLists onSetView={setView} onListChange={setCurrentListId} todosList={todosList} /> : <List onSetView={setView} listId={currentListId} />}</>;
 }
 
 export default App;
