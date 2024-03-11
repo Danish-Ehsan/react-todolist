@@ -1,4 +1,4 @@
-import { ViewState, TodosList } from "../types";
+import { ViewState, TodosList } from "../../types";
 
 type AllListsProps = {
   onSetView: React.Dispatch<React.SetStateAction<ViewState>>;

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
-import AllLists from "./components/AllLists";
-import List from "./components/List";
+import AllLists from "./components/AllLists/AllLists";
+import List from "./components/List/List";
 import { ViewState, TodosList } from "./types";
 import { todoLists as initialTodos } from "./data";
 
