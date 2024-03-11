@@ -1,4 +1,5 @@
 import { ViewState, TodoList, TodosList } from "../../types";
+import styles from "./List.module.scss";
 
 type listProps = {
   onSetView: React.Dispatch<React.SetStateAction<ViewState>>;
@@ -52,13 +53,13 @@ export default function List({ list, onSetView, onListChange }: listProps) {
   };
 
   const listItemElems = list?.listItems.map((listItem) => {
-    return <input type="text" value={listItem.itemName} key={listItem.id.toString()} onChange={(e) => handleListItemChange(e.target.value, listItem.id)} />;
+    return <input className={`${styles.listInput} ${styles.listItem}`} type="text" value={listItem.itemName} key={listItem.id.toString()} onChange={(e) => handleListItemChange(e.target.value, listItem.id)} />;
   });
 
   return (
     <>
-      <div>This is a single List</div>
       <input
+        className={`${styles.listTitle} ${styles.listInput}`}
         type="text"
         value={list?.listName}
         onChange={(e) => {
@@ -67,7 +68,9 @@ export default function List({ list, onSetView, onListChange }: listProps) {
       />
       {listItemElems}
       <div>
-        <button onClick={() => onSetView("allLists")}>Show All Lists</button>
+        <button className="button" onClick={() => onSetView("allLists")}>
+          Show All Lists
+        </button>
       </div>
     </>
   );

@@ -1,0 +1,20 @@
+.listInput {
+  background: transparent;
+  border: none;
+  margin-bottom: 5px;
+  padding: 5px;
+
+  &:focus {
+    outline: none;
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+}
+
+.listItem {
+  font-size: 1.4rem;
+}
+
+.listTitle {
+  font-size: 2rem;
+  font-weight: 600;
+}

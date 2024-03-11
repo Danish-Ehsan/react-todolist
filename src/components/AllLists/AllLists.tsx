@@ -1,4 +1,5 @@
 import { ViewState, TodosList } from "../../types";
+import styles from "./AllLists.module.scss";
 
 type AllListsProps = {
   onSetView: React.Dispatch<React.SetStateAction<ViewState>>;
@@ -10,6 +11,7 @@ export default function AllLists({ onSetView, onListSet, todosList }: AllListsPr
   const todosElements = todosList.map((todoList) => {
     return (
       <button
+        className={styles.listBtn}
         key={todoList.id.toString()}
         onClick={() => {
           onSetView("singleList");
@@ -23,7 +25,7 @@ export default function AllLists({ onSetView, onListSet, todosList }: AllListsPr
 
   return (
     <>
-      <div>This is the all lists view</div>
+      <h1>This is the all lists view</h1>
       {todosElements}
     </>
   );

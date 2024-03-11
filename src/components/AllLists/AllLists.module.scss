@@ -1,0 +1,22 @@
+.listBtn {
+  background-color: #1c1c1c;
+  text-align: left;
+  padding: 10px;
+  margin-bottom: 5px;
+  border: none;
+  border-radius: 0;
+
+  font-size: 1.6rem;
+  font-weight: 600;
+
+  transition: all 0.25s ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    color: #bd9339;
+    background-color: #141414;
+  }
+}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./App.css";
+import styles from "./App.module.scss";
 import AllLists from "./components/AllLists/AllLists";
 import List from "./components/List/List";
 import { ViewState, TodosList } from "./types";
@@ -18,7 +18,11 @@ function App() {
     }
   };
 
-  return <>{view === "allLists" ? <AllLists onSetView={setView} onListSet={setCurrentListId} todosList={todosList} /> : <List onSetView={setView} list={currentList()} onListChange={setTodosList} />}</>;
+  return (
+    <main className={styles.appContainer}>
+      <div className={styles.listWrapper}>{view === "allLists" ? <AllLists onSetView={setView} onListSet={setCurrentListId} todosList={todosList} /> : <List onSetView={setView} list={currentList()} onListChange={setTodosList} />}</div>
+    </main>
+  );
 }
 
 export default App;
