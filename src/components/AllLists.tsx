@@ -10,6 +10,7 @@ export default function AllLists({ onSetView, onListSet, todosList }: AllListsPr
   const todosElements = todosList.map((todoList) => {
     return (
       <button
+        key={todoList.id.toString()}
         onClick={() => {
           onSetView("singleList");
           onListSet(todoList.id);
