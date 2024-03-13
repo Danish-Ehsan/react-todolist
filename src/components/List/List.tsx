@@ -1,10 +1,10 @@
-import { ViewState, TodoList, TodosList } from "../../types";
+import { ViewState, SingleTodoList, AllTodoLists } from "../../types";
 import styles from "./List.module.scss";
 
 type listProps = {
   onSetView: React.Dispatch<React.SetStateAction<ViewState>>;
-  list: TodoList | undefined;
-  onListChange: React.Dispatch<React.SetStateAction<TodosList>>;
+  list: SingleTodoList | undefined;
+  onListChange: React.Dispatch<React.SetStateAction<AllTodoLists>>;
 };
 
 export default function List({ list, onSetView, onListChange }: listProps) {

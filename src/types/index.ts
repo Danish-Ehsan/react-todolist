@@ -1,6 +1,6 @@
 export type ViewState = "allLists" | "singleList";
 
-export type TodosList = {
+export type AllTodoLists = {
   listName: string;
   id: number;
   listItems: {
@@ -10,7 +10,7 @@ export type TodosList = {
   }[];
 }[];
 
-export type TodoList = {
+export type SingleTodoList = {
   listName: string;
   id: number;
   listItems: {

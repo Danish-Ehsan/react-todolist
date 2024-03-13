@@ -1,10 +1,10 @@
-import { ViewState, TodosList } from "../../types";
+import { ViewState, AllTodoLists } from "../../types";
 import styles from "./AllLists.module.scss";
 
 type AllListsProps = {
   onSetView: React.Dispatch<React.SetStateAction<ViewState>>;
   onListSet: React.Dispatch<React.SetStateAction<number | null>>;
-  todosList: TodosList;
+  todosList: AllTodoLists;
 };
 
 export default function AllLists({ onSetView, onListSet, todosList }: AllListsProps) {
