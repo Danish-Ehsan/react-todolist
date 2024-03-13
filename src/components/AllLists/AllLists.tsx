@@ -25,7 +25,7 @@ export default function AllLists({ onSetView, onListSet, todosList }: AllListsPr
 
   return (
     <>
-      <h1>This is the all lists view</h1>
+      <h1>All Lists</h1>
       {todosElements}
     </>
   );
