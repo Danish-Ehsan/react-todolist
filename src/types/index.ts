@@ -19,3 +19,7 @@ export type SingleTodoList = {
     completed: boolean;
   }[];
 };
+
+export type HandleListTitleChangeType = (listId: number, newTitle: string) => void;
+
+export type HandleListItemChangeType = (listId: number, newItemName: string, itemId: number) => void;
