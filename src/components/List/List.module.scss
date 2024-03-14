@@ -1,8 +1,10 @@
+@import "../../styles/variables.scss";
+
 .listInput {
   background: transparent;
   border: none;
-  margin-bottom: 5px;
   padding: 5px;
+  width: 100%;
 
   &:focus {
     outline: none;

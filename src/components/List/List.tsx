@@ -1,16 +1,27 @@
-import { ViewState, SingleTodoList, HandleListTitleChangeType, HandleListItemChangeType } from "../../types";
+import { ViewState, SingleTodoList, HandleListTitleChangeType, HandleListItemChangeType, HandleRemoveItem, HandleAddItem } from "../../types";
+import TrashIcon from "../../assets/TrashIcon";
 import styles from "./List.module.scss";
+import allListStyles from "../AllLists/AllLists.module.scss";
 
-type listProps = {
+type ListProps = {
   onSetView: React.Dispatch<React.SetStateAction<ViewState>>;
   list: SingleTodoList;
   onListTitleChange: HandleListTitleChangeType;
   onListItemChange: HandleListItemChangeType;
+  onRemoveItem: HandleRemoveItem;
+  onAddItem: HandleAddItem;
 };
 
-export default function List({ list, onSetView, onListTitleChange, onListItemChange }: listProps) {
-  const listItemElems = list?.listItems.map((listItem) => {
-    return <input className={`${styles.listInput} ${styles.listItem}`} type="text" value={listItem.itemName} key={listItem.id.toString()} onChange={(e) => onListItemChange(list.id, e.target.value, listItem.id)} />;
+export default function List({ list, onSetView, onListTitleChange, onListItemChange, onRemoveItem, onAddItem }: ListProps) {
+  const listItemElems = list.listItems.map((listItem) => {
+    return (
+      <div className={allListStyles.listRow} key={listItem.id.toString()}>
+        <input className={`${styles.listInput} ${styles.listItem}`} type="text" value={listItem.itemName} onChange={(e) => onListItemChange(list.id, e.target.value, listItem.id)} />
+        <button onClick={() => onRemoveItem(list.id, listItem.id)} className={allListStyles.trashBtn}>
+          <TrashIcon className={allListStyles.trashIcon} />
+        </button>
+      </div>
+    );
   });
 
   return (
@@ -24,11 +35,12 @@ export default function List({ list, onSetView, onListTitleChange, onListItemCha
         }}
       />
       {listItemElems}
-      <div>
-        <button className="button" onClick={() => onSetView("allLists")}>
-          Show All Lists
-        </button>
-      </div>
+      <button className="button" onClick={() => onAddItem(list.id)}>
+        + Add Item
+      </button>
+      <button className="button" onClick={() => onSetView("allLists")}>
+        Show All Lists
+      </button>
     </>
   );
 }

@@ -25,3 +25,9 @@ export type HandleListTitleChangeType = (listId: number, newTitle: string) => vo
 export type HandleListItemChangeType = (listId: number, newItemName: string, itemId: number) => void;
 
 export type HandleRemoveList = (listId: number) => void;
+
+export type HandleRemoveItem = (listId: number, itemId: number) => void;
+
+export type HandleAddList = () => void;
+
+export type HandleAddItem = (listId: number) => void;

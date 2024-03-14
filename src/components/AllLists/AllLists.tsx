@@ -1,4 +1,4 @@
-import { ViewState, AllTodoLists, HandleRemoveList } from "../../types";
+import { ViewState, AllTodoLists, HandleRemoveList, HandleAddList } from "../../types";
 import TrashIcon from "../../assets/TrashIcon";
 import styles from "./AllLists.module.scss";
 
@@ -7,9 +7,10 @@ type AllListsProps = {
   onListSet: React.Dispatch<React.SetStateAction<number | null>>;
   todosList: AllTodoLists;
   onRemoveList: HandleRemoveList;
+  onAddList: HandleAddList;
 };
 
-export default function AllLists({ onSetView, onListSet, todosList, onRemoveList }: AllListsProps) {
+export default function AllLists({ onSetView, onListSet, todosList, onRemoveList, onAddList }: AllListsProps) {
   const todosElements = todosList.map((todoList) => {
     return (
       <div className={styles.listRow} key={todoList.id.toString()}>
@@ -33,6 +34,14 @@ export default function AllLists({ onSetView, onListSet, todosList, onRemoveList
     <>
       <h1>All Lists</h1>
       {todosElements}
+      <button
+        className="button"
+        onClick={() => {
+          onAddList();
+        }}
+      >
+        + Create List
+      </button>
     </>
   );
 }
