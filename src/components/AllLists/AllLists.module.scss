@@ -1,10 +1,12 @@
+@import "../../styles/variables.scss";
+
 .listBtn {
-  background-color: #1c1c1c;
+  background-color: $buttonBackground;
   text-align: left;
   padding: 10px;
-  margin-bottom: 5px;
   border: none;
   border-radius: 0;
+  width: 100%;
 
   font-size: 1.6rem;
   font-weight: 600;
@@ -16,7 +18,36 @@
   }
 
   &:hover {
-    color: #bd9339;
-    background-color: #141414;
+    color: $gold;
+    background-color: $buttonHover;
+  }
+}
+
+.listRow {
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  column-gap: 0.5rem;
+}
+
+.trashIcon {
+  height: 2rem;
+  fill: $lightgrey;
+}
+
+.trashBtn {
+  display: flex;
+  place-items: center;
+  border-radius: 0;
+  background-color: $appBackground;
+  border: none;
+  padding: 0.5rem 0.75rem;
+
+  &:hover {
+    background: $buttonHover;
+
+    .trashIcon {
+      fill: $gold;
+    }
   }
 }

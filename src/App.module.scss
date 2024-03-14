@@ -1,14 +1,18 @@
+@import "./styles/variables.scss";
+
 .appContainer {
   min-width: 400px;
   border-radius: 10px;
-  background-color: #1a1a1a;
+  background-color: $appBackground;
   padding: 50px 10px 30px;
 }
 
 .listWrapper {
   display: flex;
   flex-direction: column;
-  background-color: #242424;
+  row-gap: 1rem;
+
+  background-color: $backgroundColor;
   border-radius: 10px;
   padding: 20px;
 }

@@ -23,3 +23,5 @@ export type SingleTodoList = {
 export type HandleListTitleChangeType = (listId: number, newTitle: string) => void;
 
 export type HandleListItemChangeType = (listId: number, newItemName: string, itemId: number) => void;
+
+export type HandleRemoveList = (listId: number) => void;

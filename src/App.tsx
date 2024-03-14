@@ -3,7 +3,7 @@ import styles from "./App.module.scss";
 import AllLists from "./components/AllLists/AllLists";
 import List from "./components/List/List";
 import { todosListReducer } from "./utils.ts";
-import { ViewState, HandleListTitleChangeType, HandleListItemChangeType } from "./types";
+import { ViewState, HandleListTitleChangeType, HandleListItemChangeType, HandleRemoveList } from "./types";
 import { todoLists as initialTodos } from "./data";
 
 function App() {
@@ -36,10 +36,21 @@ function App() {
     });
   };
 
+  const handleRemoveList: HandleRemoveList = (listId) => {
+    dispatch({
+      type: "list-removed",
+      listId: listId,
+    });
+  };
+
   return (
     <main className={styles.appContainer}>
       <div className={styles.listWrapper}>
-        {view === "allLists" ? <AllLists onSetView={setView} onListSet={setCurrentListId} todosList={todosList} /> : <List onSetView={setView} list={currentList()} onListTitleChange={handleListTitleChange} onListItemChange={handleListItemChange} />}
+        {view === "allLists" ? (
+          <AllLists onSetView={setView} onListSet={setCurrentListId} todosList={todosList} onRemoveList={handleRemoveList} />
+        ) : (
+          <List onSetView={setView} list={currentList()} onListTitleChange={handleListTitleChange} onListItemChange={handleListItemChange} />
+        )}
       </div>
     </main>
   );

@@ -1,6 +1,6 @@
 import { AllTodoLists } from "./types";
 
-type TodosAction = { type: "title-changed"; listId: number; newTitle: string } | { type: "item-changed"; listId: number; newItemName: string; itemId: number };
+type TodosAction = { type: "title-changed"; listId: number; newTitle: string } | { type: "item-changed"; listId: number; newItemName: string; itemId: number } | { type: "list-removed"; listId: number };
 
 export function todosListReducer(todoLists: AllTodoLists, action: TodosAction) {
   switch (action.type) {
@@ -40,6 +40,10 @@ export function todosListReducer(todoLists: AllTodoLists, action: TodosAction) {
         }
       });
 
+      return newLists;
+    }
+    case "list-removed": {
+      const newLists = todoLists.filter((list) => list.id !== action.listId);
       return newLists;
     }
   }
