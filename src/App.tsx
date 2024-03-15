@@ -73,7 +73,7 @@ function App() {
         {view === "allLists" ? (
           <AllLists onSetView={setView} onListSet={setCurrentListId} todosList={todosList} onRemoveList={handleRemoveList} onAddList={handleAddList} />
         ) : (
-          <List onSetView={setView} list={currentList()} onListTitleChange={handleListTitleChange} onListItemChange={handleListItemChange} onRemoveItem={handleRemoveItem} onAddItem={handleAddItem} />
+          <List onSetView={setView} list={currentList()} onListTitleChange={handleListTitleChange} onListItemChange={handleListItemChange} onRemoveItem={handleRemoveItem} onAddItem={handleAddItem} onRemoveList={handleRemoveList} />
         )}
       </div>
     </main>

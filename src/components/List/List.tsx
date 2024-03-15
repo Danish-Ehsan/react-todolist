@@ -1,4 +1,4 @@
-import { ViewState, SingleTodoList, HandleListTitleChangeType, HandleListItemChangeType, HandleRemoveItem, HandleAddItem } from "../../types";
+import { ViewState, SingleTodoList, HandleListTitleChangeType, HandleListItemChangeType, HandleRemoveItem, HandleRemoveList, HandleAddItem } from "../../types";
 import TrashIcon from "../../assets/TrashIcon";
 import styles from "./List.module.scss";
 import allListStyles from "../AllLists/AllLists.module.scss";
@@ -9,10 +9,11 @@ type ListProps = {
   onListTitleChange: HandleListTitleChangeType;
   onListItemChange: HandleListItemChangeType;
   onRemoveItem: HandleRemoveItem;
+  onRemoveList: HandleRemoveList;
   onAddItem: HandleAddItem;
 };
 
-export default function List({ list, onSetView, onListTitleChange, onListItemChange, onRemoveItem, onAddItem }: ListProps) {
+export default function List({ list, onSetView, onListTitleChange, onListItemChange, onRemoveItem, onRemoveList, onAddItem }: ListProps) {
   const listItemElems = list.listItems.map((listItem) => {
     return (
       <div className={allListStyles.listRow} key={listItem.id.toString()}>
@@ -38,7 +39,16 @@ export default function List({ list, onSetView, onListTitleChange, onListItemCha
       <button className="button" onClick={() => onAddItem(list.id)}>
         + Add Item
       </button>
-      <button className="button" onClick={() => onSetView("allLists")}>
+      <button
+        className="button"
+        onClick={() => {
+          onSetView("allLists");
+
+          if (list.listName === "Untitled" && list.listItems.length < 1) {
+            onRemoveList(list.id);
+          }
+        }}
+      >
         Show All Lists
       </button>
     </>
