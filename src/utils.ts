@@ -6,7 +6,8 @@ type TodosAction =
   | { type: "list-removed"; listId: number }
   | { type: "item-removed"; listId: number; itemId: number }
   | { type: "list-added"; setCurrentListId: React.Dispatch<React.SetStateAction<number | null>> }
-  | { type: "item-added"; listId: number };
+  | { type: "item-added"; listId: number }
+  | { type: "item-marked"; listId: number; itemId: number; completed: boolean };
 
 export function todosListReducer(todoLists: AllTodoLists, action: TodosAction) {
   switch (action.type) {
@@ -107,6 +108,31 @@ export function todosListReducer(todoLists: AllTodoLists, action: TodosAction) {
           };
 
           return newList;
+        }
+      });
+
+      return newLists;
+    }
+    case "item-marked": {
+      const newLists = todoLists.map((list) => {
+        if (list.id !== action.listId) {
+          return list;
+        } else {
+          const newListItems = list.listItems.map((listItem) => {
+            if (listItem.id !== action.itemId) {
+              return listItem;
+            } else {
+              return {
+                ...listItem,
+                completed: action.completed,
+              };
+            }
+          });
+
+          return {
+            ...list,
+            listItems: newListItems,
+          };
         }
       });
 

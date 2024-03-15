@@ -3,7 +3,7 @@ import styles from "./App.module.scss";
 import AllLists from "./components/AllLists/AllLists";
 import List from "./components/List/List";
 import { todosListReducer } from "./utils.ts";
-import { ViewState, HandleListTitleChangeType, HandleListItemChangeType, HandleRemoveList, HandleRemoveItem, HandleAddList, HandleAddItem } from "./types";
+import { ViewState, HandleListTitleChangeType, HandleListItemChangeType, HandleRemoveList, HandleRemoveItem, HandleAddList, HandleAddItem, HandleMarkItem } from "./types";
 import { todoLists as initialTodos } from "./data";
 
 function App() {
@@ -67,13 +67,31 @@ function App() {
     });
   };
 
+  const handleMarkItem: HandleMarkItem = (listId, itemId, completed) => {
+    dispatch({
+      type: "item-marked",
+      listId: listId,
+      itemId: itemId,
+      completed: completed,
+    });
+  };
+
   return (
     <main className={styles.appContainer}>
       <div className={styles.listWrapper}>
         {view === "allLists" ? (
           <AllLists onSetView={setView} onListSet={setCurrentListId} todosList={todosList} onRemoveList={handleRemoveList} onAddList={handleAddList} />
         ) : (
-          <List onSetView={setView} list={currentList()} onListTitleChange={handleListTitleChange} onListItemChange={handleListItemChange} onRemoveItem={handleRemoveItem} onAddItem={handleAddItem} onRemoveList={handleRemoveList} />
+          <List
+            onSetView={setView}
+            list={currentList()}
+            onListTitleChange={handleListTitleChange}
+            onListItemChange={handleListItemChange}
+            onRemoveItem={handleRemoveItem}
+            onAddItem={handleAddItem}
+            onRemoveList={handleRemoveList}
+            onMarkItem={handleMarkItem}
+          />
         )}
       </div>
     </main>
