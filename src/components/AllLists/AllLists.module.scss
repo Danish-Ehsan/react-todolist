@@ -31,7 +31,7 @@
 }
 
 .trashIcon {
-  height: 2rem;
+  height: 1.8rem;
   fill: $lightgrey;
 }
 
@@ -42,6 +42,10 @@
   background-color: $appBackground;
   border: none;
   padding: 0.5rem 0.75rem;
+
+  &--listItem {
+    background-color: transparent;
+  }
 
   &:hover {
     background: $buttonHover;

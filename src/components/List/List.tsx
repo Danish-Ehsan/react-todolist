@@ -23,7 +23,7 @@ export default function List({ list, onSetView, onListTitleChange, onListItemCha
           <span className={styles.customCheckmark}></span>
         </label>
         <input className={`${styles.listInput} ${styles.listItem} ${listItem.completed ? styles["is-completed"] : ""}`} type="text" value={listItem.itemName} onChange={(e) => onListItemChange(list.id, e.target.value, listItem.id)} />
-        <button onClick={() => onRemoveItem(list.id, listItem.id)} className={allListStyles.trashBtn}>
+        <button onClick={() => onRemoveItem(list.id, listItem.id)} className={`${allListStyles.trashBtn} ${allListStyles["trashBtn--listItem"]}`}>
           <TrashIcon className={allListStyles.trashIcon} />
         </button>
       </div>
