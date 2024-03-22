@@ -1,6 +1,6 @@
 import ListItem from "../ListItem/ListItem";
+import ListTitle from "../ListTitle/ListTitle";
 import { ViewState, AllTodoLists, HandleListTitleChangeType, HandleListItemChangeType, HandleRemoveItem, HandleRemoveList, HandleAddItem, HandleMarkItem } from "../../types";
-import styles from "./List.module.scss";
 
 type ListProps = {
   onSetView: React.Dispatch<React.SetStateAction<ViewState>>;
@@ -20,15 +20,7 @@ export default function List({ list, onSetView, onListTitleChange, onListItemCha
 
   return (
     <>
-      <textarea
-        className={`${styles.listTitle} ${styles.listTextarea}`}
-        rows={1}
-        onChange={(e) => {
-          onListTitleChange(list.id, e.target.value);
-        }}
-      >
-        {list?.listName}
-      </textarea>
+      <ListTitle listTitle={list.listName} listId={list.id} onListTitleChange={onListTitleChange} />
       {listItemElems}
       <button className="button" onClick={() => onAddItem(list.id)}>
         + Add Item
