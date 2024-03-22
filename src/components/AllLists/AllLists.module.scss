@@ -28,6 +28,10 @@
   display: flex;
   align-items: stretch;
   column-gap: 0.5rem;
+
+  &--align-start {
+    align-items: flex-start;
+  }
 }
 
 .trashIcon {

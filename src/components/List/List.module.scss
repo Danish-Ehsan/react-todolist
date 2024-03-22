@@ -41,12 +41,17 @@
   opacity: 0;
 }
 
-.customCheckmark:after {
-  content: "";
-  display: block;
-  width: 2.5rem;
-  height: 2.5rem;
-  background: url(../../assets/checkbox.svg) center / 1.5rem no-repeat;
+.customCheckmark {
+  position: relative;
+  top: 2px;
+
+  &:after {
+    content: "";
+    display: block;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: url(../../assets/checkbox.svg) center / 1.5rem no-repeat;
+  }
 }
 
 .checkbox:checked + .customCheckmark:after {
