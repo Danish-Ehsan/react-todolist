@@ -10,16 +10,6 @@ export type AllTodoLists = {
   }[];
 }[];
 
-export type SingleTodoList = {
-  listName: string;
-  id: number;
-  listItems: {
-    itemName: string;
-    id: number;
-    completed: boolean;
-  }[];
-};
-
 export type HandleListTitleChangeType = (listId: number, newTitle: string) => void;
 
 export type HandleListItemChangeType = (listId: number, newItemName: string, itemId: number) => void;

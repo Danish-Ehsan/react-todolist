@@ -1,10 +1,10 @@
 import ListItem from "../ListItem/ListItem";
-import { ViewState, SingleTodoList, HandleListTitleChangeType, HandleListItemChangeType, HandleRemoveItem, HandleRemoveList, HandleAddItem, HandleMarkItem } from "../../types";
+import { ViewState, AllTodoLists, HandleListTitleChangeType, HandleListItemChangeType, HandleRemoveItem, HandleRemoveList, HandleAddItem, HandleMarkItem } from "../../types";
 import styles from "./List.module.scss";
 
 type ListProps = {
   onSetView: React.Dispatch<React.SetStateAction<ViewState>>;
-  list: SingleTodoList;
+  list: AllTodoLists[0];
   onListTitleChange: HandleListTitleChangeType;
   onListItemChange: HandleListItemChangeType;
   onRemoveItem: HandleRemoveItem;
