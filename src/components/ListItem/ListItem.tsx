@@ -28,9 +28,7 @@ export default function ListItem({ listItem, listId, onMarkItem, onListItemChang
         <input className={listStyles.checkbox} type="checkbox" checked={listItem.completed} onChange={() => onMarkItem(listId, listItem.id, !listItem.completed)} />
         <span className={listStyles.customCheckmark}></span>
       </label>
-      <textarea ref={textareaRef} className={`${listStyles.listTextarea} ${listStyles.listItem} ${listItem.completed ? listStyles["is-completed"] : ""}`} rows={1} onChange={(e) => onListItemChange(listId, e.target.value, listItem.id)}>
-        {listItem.itemName}
-      </textarea>
+      <textarea ref={textareaRef} value={listItem.itemName} className={`${listStyles.listTextarea} ${listStyles.listItem} ${listItem.completed ? listStyles["is-completed"] : ""}`} rows={1} onChange={(e) => onListItemChange(listId, e.target.value, listItem.id)} />
       <button onClick={() => onRemoveItem(listId, listItem.id)} className={`${allListStyles.trashBtn} ${allListStyles["trashBtn--listItem"]}`}>
         <TrashIcon className={allListStyles.trashIcon} />
       </button>

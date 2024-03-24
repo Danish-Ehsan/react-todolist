@@ -11,12 +11,11 @@ export default function ListTitle({ listTitle, listId, onListTitleChange }: List
   return (
     <textarea
       className={`${styles.listTitle} ${styles.listTextarea}`}
+      value={listTitle}
       rows={1}
       onChange={(e) => {
         onListTitleChange(listId, e.target.value);
       }}
-    >
-      {listTitle}
-    </textarea>
+    />
   );
 }
