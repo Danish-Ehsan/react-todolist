@@ -1,8 +1,9 @@
-import { useLayoutEffect, useRef } from "react";
+import { useRef } from "react";
 import { AllTodoLists, HandleListItemChangeType, HandleRemoveItem, HandleMarkItem } from "../../types";
 import allListStyles from "../AllLists/AllLists.module.scss";
 import listStyles from "../List/List.module.scss";
 import TrashIcon from "../../assets/TrashIcon";
+import useResizeTextarea from "../../hooks/useResizeTextarea";
 
 type ListItemProps = {
   listItem: AllTodoLists[0]["listItems"][0];
@@ -15,12 +16,7 @@ type ListItemProps = {
 export default function ListItem({ listItem, listId, onMarkItem, onListItemChange, onRemoveItem }: ListItemProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  useLayoutEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "";
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
-    }
-  }, [listItem]);
+  useResizeTextarea(textareaRef, listItem.itemName);
 
   return (
     <div className={`${allListStyles.listRow} ${allListStyles["listRow--align-start"]}`} key={listItem.id.toString()}>
