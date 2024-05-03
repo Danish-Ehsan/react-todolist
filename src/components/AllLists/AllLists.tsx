@@ -21,7 +21,7 @@ export default function AllLists({ onSetView, onListSet, todosList, onRemoveList
             onListSet(todoList.id);
           }}
         >
-          {todoList.listName}
+          {todoList.listName ? todoList.listName : <em>Untitled</em>}
         </button>
         <button onClick={() => onRemoveList(todoList.id)} className={styles.trashBtn}>
           <TrashIcon className={styles.trashIcon} />

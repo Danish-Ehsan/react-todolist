@@ -75,7 +75,7 @@ export function todosListReducer(todoLists: AllTodoLists, action: TodosAction) {
       const newLists = [
         ...todoLists,
         {
-          listName: "Untitled",
+          listName: "",
           id: action.listItemId,
           listItems: [],
         },

@@ -20,6 +20,8 @@ export default function ListTitle({ listTitle, listId, onListTitleChange }: List
       value={listTitle}
       rows={1}
       ref={textareaRef}
+      placeholder="List Title"
+      autoFocus={listTitle === ''}
       onChange={(e) => {
         onListTitleChange(listId, e.target.value);
       }}
