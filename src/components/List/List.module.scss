@@ -57,3 +57,7 @@
 .checkbox:checked + .customCheckmark:after {
   background: url(../../assets/checkbox-selected.svg) 0.5rem center / 2rem no-repeat;
 }
+
+.checkbox:focus + .customCheckmark:after {
+  outline: 5px auto -webkit-focus-ring-color;
+}
