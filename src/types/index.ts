@@ -18,8 +18,8 @@ export type HandleRemoveList = (listId: number) => void;
 
 export type HandleRemoveItem = (listId: number, itemId: number) => void;
 
-export type HandleAddList = () => void;
+export type HandleAddList = (listItemId: number) => void;
 
-export type HandleAddItem = (listId: number) => void;
+export type HandleAddItem = (listId: number, listItemId: number) => void;
 
 export type HandleMarkItem = (listId: number, itemId: number, complete: boolean) => void;

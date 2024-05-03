@@ -6,6 +6,7 @@ import TrashIcon from "../../assets/TrashIcon";
 import useResizeTextarea from "../../hooks/useResizeTextarea";
 
 type ListItemProps = {
+  shouldAutoFocus: boolean;
   listItem: AllTodoLists[0]["listItems"][0];
   listId: number;
   onListItemChange: HandleListItemChangeType;
@@ -13,7 +14,7 @@ type ListItemProps = {
   onMarkItem: HandleMarkItem;
 };
 
-export default function ListItem({ listItem, listId, onMarkItem, onListItemChange, onRemoveItem }: ListItemProps) {
+export default function ListItem({ listItem, listId, shouldAutoFocus, onMarkItem, onListItemChange, onRemoveItem }: ListItemProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   useResizeTextarea(textareaRef, listItem.itemName);
@@ -24,7 +25,7 @@ export default function ListItem({ listItem, listId, onMarkItem, onListItemChang
         <input className={listStyles.checkbox} type="checkbox" checked={listItem.completed} onChange={() => onMarkItem(listId, listItem.id, !listItem.completed)} />
         <span className={listStyles.customCheckmark}></span>
       </label>
-      <textarea ref={textareaRef} value={listItem.itemName} className={`${listStyles.listTextarea} ${listStyles.listItem} ${listItem.completed ? listStyles["is-completed"] : ""}`} rows={1} onChange={(e) => onListItemChange(listId, e.target.value, listItem.id)} />
+      <textarea ref={textareaRef} value={listItem.itemName} className={`${listStyles.listTextarea} ${listStyles.listItem} ${listItem.completed ? listStyles["is-completed"] : ""}`} rows={1} onChange={(e) => onListItemChange(listId, e.target.value, listItem.id)} autoFocus={shouldAutoFocus} />
       <button onClick={() => onRemoveItem(listId, listItem.id)} className={`${allListStyles.trashBtn} ${allListStyles["trashBtn--listItem"]}`}>
         <TrashIcon className={allListStyles.trashIcon} />
       </button>

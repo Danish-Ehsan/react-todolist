@@ -55,15 +55,17 @@ function App() {
     dispatch({
       type: "list-added",
       setCurrentListId: setCurrentListId,
+      listItemId: Date.now()
     });
 
     setView("singleList");
   };
 
-  const handleAddItem: HandleAddItem = (listId) => {
+  const handleAddItem: HandleAddItem = (listId, listItemId) => {
     dispatch({
       type: "item-added",
-      listId: listId,
+      listId,
+      listItemId
     });
   };
 

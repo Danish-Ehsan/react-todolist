@@ -5,8 +5,8 @@ type TodosAction =
   | { type: "item-changed"; listId: number; newItemName: string; itemId: number }
   | { type: "list-removed"; listId: number }
   | { type: "item-removed"; listId: number; itemId: number }
-  | { type: "list-added"; setCurrentListId: React.Dispatch<React.SetStateAction<number | null>> }
-  | { type: "item-added"; listId: number }
+  | { type: "list-added"; setCurrentListId: React.Dispatch<React.SetStateAction<number | null>>; listItemId: number }
+  | { type: "item-added"; listId: number; listItemId: number }
   | { type: "item-marked"; listId: number; itemId: number; completed: boolean };
 
 export function todosListReducer(todoLists: AllTodoLists, action: TodosAction) {
@@ -72,17 +72,16 @@ export function todosListReducer(todoLists: AllTodoLists, action: TodosAction) {
       return newLists;
     }
     case "list-added": {
-      const newId = Date.now();
       const newLists = [
         ...todoLists,
         {
           listName: "Untitled",
-          id: newId,
+          id: action.listItemId,
           listItems: [],
         },
       ];
 
-      action.setCurrentListId(newId);
+      action.setCurrentListId(action.listItemId);
       console.log(todoLists);
 
       return newLists;
@@ -97,7 +96,7 @@ export function todosListReducer(todoLists: AllTodoLists, action: TodosAction) {
             ...list.listItems,
             {
               itemName: "",
-              id: Date.now(),
+              id: action.listItemId,
               completed: false,
             },
           ];

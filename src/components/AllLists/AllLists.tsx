@@ -37,7 +37,7 @@ export default function AllLists({ onSetView, onListSet, todosList, onRemoveList
       <button
         className="button"
         onClick={() => {
-          onAddList();
+          onAddList(Date.now());
         }}
       >
         + Create List
