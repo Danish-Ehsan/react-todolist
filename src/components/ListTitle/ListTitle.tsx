@@ -1,15 +1,15 @@
-import { useRef } from "react";
-import { HandleListTitleChangeType } from "../../types";
+import { useRef, useContext } from "react";
 import styles from "../List/List.module.scss";
 import useResizeTextarea from "../../hooks/useResizeTextarea";
+import { ListsDispatchContext } from "../../providers/ListProvider";
 
 type ListTitleProps = {
   listTitle: string;
   listId: number;
-  onListTitleChange: HandleListTitleChangeType;
 };
 
-export default function ListTitle({ listTitle, listId, onListTitleChange }: ListTitleProps) {
+export default function ListTitle({ listTitle, listId }: ListTitleProps) {
+  const listsDispatch = useContext(ListsDispatchContext);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   useResizeTextarea(textareaRef, listTitle);
@@ -23,7 +23,11 @@ export default function ListTitle({ listTitle, listId, onListTitleChange }: List
       placeholder="List Title"
       autoFocus={listTitle === ''}
       onChange={(e) => {
-        onListTitleChange(listId, e.target.value);
+        listsDispatch({
+          type: "title-changed",
+          listId: listId,
+          newTitle: e.target.value,
+        });
       }}
     />
   );

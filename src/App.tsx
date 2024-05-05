@@ -1,21 +1,20 @@
-import { useState, useReducer } from "react";
+import { useState, useContext } from "react";
 import styles from "./App.module.scss";
 import AllLists from "./components/AllLists/AllLists";
 import List from "./components/List/List";
-import { todosListReducer } from "./utils.ts";
 import { ViewState, HandleListTitleChangeType, HandleListItemChangeType, HandleRemoveList, HandleRemoveItem, HandleAddList, HandleAddItem, HandleMarkItem } from "./types";
-import { todoLists as initialTodos } from "./data";
+import { ListsContext, ListsProvider } from "./providers/ListProvider.tsx";
 
 function App() {
   const [view, setView] = useState<ViewState>("allLists");
   const [currentListId, setCurrentListId] = useState<null | number>(null);
-  const [todosList, dispatch] = useReducer(todosListReducer, initialTodos);
+  const todosLists = useContext(ListsContext);
 
-  const currentList = function () {
+  const currentListIndex = function () {
     if (currentListId === null) {
-      return todosList[0];
+      return;
     } else {
-      return todosList.find((todoList) => todoList.id === currentListId)!;
+      return todosLists.findIndex((todoList) => todoList.id === currentListId)!;
     }
   };
 
@@ -54,7 +53,6 @@ function App() {
   const handleAddList: HandleAddList = () => {
     dispatch({
       type: "list-added",
-      setCurrentListId: setCurrentListId,
       listItemId: Date.now()
     });
 
@@ -79,24 +77,20 @@ function App() {
   };
 
   return (
-    <main className={styles.appContainer}>
-      <div className={styles.listWrapper}>
-        {view === "allLists" ? (
-          <AllLists onSetView={setView} onListSet={setCurrentListId} todosList={todosList} onRemoveList={handleRemoveList} onAddList={handleAddList} />
-        ) : (
-          <List
-            onSetView={setView}
-            list={currentList()}
-            onListTitleChange={handleListTitleChange}
-            onListItemChange={handleListItemChange}
-            onRemoveItem={handleRemoveItem}
-            onAddItem={handleAddItem}
-            onRemoveList={handleRemoveList}
-            onMarkItem={handleMarkItem}
-          />
-        )}
-      </div>
-    </main>
+    <ListsProvider>
+      <main className={styles.appContainer}>
+        <div className={styles.listWrapper}>
+          {view === "allLists" ? (
+            <AllLists onSetView={setView} onSetCurrentListId={setCurrentListId} />
+          ) : (
+            <List
+              listIndex={currentListIndex() || 0}
+              onSetView={setView}
+            />
+          )}
+        </div>
+      </main>
+    </ListsProvider>
   );
 }
 

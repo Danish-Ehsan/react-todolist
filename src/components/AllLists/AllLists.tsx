@@ -1,29 +1,37 @@
-import { ViewState, AllTodoLists, HandleRemoveList, HandleAddList } from "../../types";
+import { useContext } from "react";
+import { ListsContext, ListsDispatchContext } from "../../providers/ListProvider";
+import { ViewState } from "../../types";
 import TrashIcon from "../../assets/TrashIcon";
 import styles from "./AllLists.module.scss";
 
+
 type AllListsProps = {
   onSetView: React.Dispatch<React.SetStateAction<ViewState>>;
-  onListSet: React.Dispatch<React.SetStateAction<number | null>>;
-  todosList: AllTodoLists;
-  onRemoveList: HandleRemoveList;
-  onAddList: HandleAddList;
+  onSetCurrentListId: React.Dispatch<React.SetStateAction<number | null>>;
 };
 
-export default function AllLists({ onSetView, onListSet, todosList, onRemoveList, onAddList }: AllListsProps) {
-  const todosElements = todosList.map((todoList) => {
+export default function AllLists({ onSetView, onSetCurrentListId }: AllListsProps) {
+  const todosLists = useContext(ListsContext);
+  const listsDispatch = useContext(ListsDispatchContext);
+
+  const todosElements = todosLists.map((todosList) => {
     return (
-      <div className={styles.listRow} key={todoList.id.toString()}>
+      <div className={styles.listRow} key={todosList.id.toString()}>
         <button
           className={styles.listBtn}
           onClick={() => {
             onSetView("singleList");
-            onListSet(todoList.id);
+            onSetCurrentListId(todosList.id);
           }}
         >
-          {todoList.listName ? todoList.listName : <em>Untitled</em>}
+          {todosList.listName ? todosList.listName : <em>Untitled</em>}
         </button>
-        <button onClick={() => onRemoveList(todoList.id)} className={styles.trashBtn}>
+        <button onClick={() => 
+          listsDispatch({
+            type: "list-removed",
+            listId: todosList.id,
+          })} 
+          className={styles.trashBtn}>
           <TrashIcon className={styles.trashIcon} />
         </button>
       </div>
@@ -37,7 +45,15 @@ export default function AllLists({ onSetView, onListSet, todosList, onRemoveList
       <button
         className="button"
         onClick={() => {
-          onAddList(Date.now());
+          const newListId = Date.now();
+
+          listsDispatch({
+            type: "list-added",
+            listItemId: newListId
+          });
+
+          onSetCurrentListId(newListId);
+          onSetView('singleList');
         }}
       >
         + Create List

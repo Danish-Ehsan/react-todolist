@@ -1,35 +1,39 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import ListItem from "../ListItem/ListItem";
 import ListTitle from "../ListTitle/ListTitle";
-import { ViewState, AllTodoLists, HandleListTitleChangeType, HandleListItemChangeType, HandleRemoveItem, HandleRemoveList, HandleAddItem, HandleMarkItem } from "../../types";
+import { ViewState } from "../../types";
+import { ListsContext, ListsDispatchContext } from "../../providers/ListProvider";
 
 type ListProps = {
+  listIndex: number;
   onSetView: React.Dispatch<React.SetStateAction<ViewState>>;
-  list: AllTodoLists[0];
-  onListTitleChange: HandleListTitleChangeType;
-  onListItemChange: HandleListItemChangeType;
-  onRemoveItem: HandleRemoveItem;
-  onRemoveList: HandleRemoveList;
-  onAddItem: HandleAddItem;
-  onMarkItem: HandleMarkItem;
 };
 
-export default function List({ list, onSetView, onListTitleChange, onListItemChange, onRemoveItem, onRemoveList, onAddItem, onMarkItem }: ListProps) {
+export default function List({ listIndex, onSetView }: ListProps) {
   const [newListItemId, setNewListItemId] = useState<number | null>(null);
+  const listsDispatch = useContext(ListsDispatchContext);
+  const allLists = useContext(ListsContext);
+  const list = allLists[listIndex];
 
   const listItemElems = list.listItems.map((listItem) => {
-    return <ListItem listItem={listItem} listId={list.id} shouldAutoFocus={listItem.id === newListItemId} onListItemChange={onListItemChange} onRemoveItem={onRemoveItem} onMarkItem={onMarkItem} key={listItem.id.toString()} />;
+    return <ListItem listItem={listItem} listId={list.id} shouldAutoFocus={listItem.id === newListItemId} key={listItem.id.toString()} />;
   });
 
   return (
     <>
-      <ListTitle listTitle={list.listName} listId={list.id} onListTitleChange={onListTitleChange} />
+      <ListTitle listTitle={list.listName} listId={list.id} />
       {listItemElems}
       <button className="button" 
         onClick={
           () => {
             const newId = Date.now();
-            onAddItem(list.id, newId);
+
+            listsDispatch({
+              type: "item-added",
+              listId: list.id,
+              listItemId: newId
+            });
+
             setNewListItemId(newId);
           }
         }>
@@ -41,7 +45,10 @@ export default function List({ list, onSetView, onListTitleChange, onListItemCha
           onSetView("allLists");
 
           if (list.listName === "Untitled" && list.listItems.length < 1) {
-            onRemoveList(list.id);
+            listsDispatch({
+              type: "list-removed",
+              listId: list.id,
+            });
           }
         }}
       >
