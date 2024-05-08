@@ -21,8 +21,20 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    console.log('App useEffect firing');
+    const abortObj = { abort: false };
+    getLists(listsDispatch, abortObj);
+
+    //return function has closure over abortObj
+    return () => {
+      console.log('useEffect cleanup firing');
+      abortObj.abort = true;
+    }
+
+  }, [listsDispatch]);
+
   return (
-    <ListsProvider>
     <main className={styles.appContainer}>
       <div className={styles.listWrapper}>
         {view === "allLists" ? (
@@ -35,7 +47,6 @@ function App() {
         )}
       </div>
     </main>
-    </ListsProvider>
   );
 }
 
