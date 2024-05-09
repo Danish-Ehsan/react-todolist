@@ -1,29 +1,29 @@
 function openDatabase() {
-  let request;
+  let dbRequest;
 
   //Create closure over request variable to keep reference to open database object
   return function() {
     console.log('requestDatabase firing');
 
-    if (request) {
-      return request;
+    if (dbRequest) {
+      return dbRequest;
     }
 
-    request = window.indexedDB.open('listDatabase', 1);
+    dbRequest = window.indexedDB.open('listDatabase', 1);
 
-    request.addEventListener('error', (event) => {
+    dbRequest.addEventListener('error', (event) => {
       console.error(`Database error opening database connection: ${event.target.err}`);
     });
 
-    request.addEventListener('success', () => {
+    dbRequest.addEventListener('success', () => {
       console.log('Database connection opened');
     });
 
-    request.addEventListener('upgradeneeded', (event) => {
+    dbRequest.addEventListener('upgradeneeded', (event) => {
       createDatabase(event.target.result);
     });
 
-    return request;
+    return dbRequest;
   }
 }
 
@@ -39,11 +39,11 @@ export function getLists(listsDispatch, abortObj) {
 
   let lists = [];
 
-  const request = requestDatabase();
+  const dbRequest = requestDatabase();
 
-  console.log({request});
+  console.log({dbRequest});
 
-  request.addEventListener('success', (event) => {
+  dbRequest.addEventListener('success', (event) => {
     
     if (abortObj.abort) {
       console.log('Aborting request');
