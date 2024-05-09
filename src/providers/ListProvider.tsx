@@ -1,16 +1,17 @@
 import { createContext, useReducer } from "react";
 import { AllTodoLists } from "../types";
+import { createId } from "../utils/general";
 
 type ListsProviderProps = { children: React.ReactNode }
 
 type TodosAction =
-  | { type: "lists-loaded"; lists: AllTodoLists }
-  | { type: "title-changed"; listId: number; newTitle: string }
-  | { type: "item-changed"; listId: number; newItemName: string; itemId: number }
-  | { type: "list-removed"; listId: number }
-  | { type: "item-removed"; listId: number; itemId: number }
-  | { type: "list-added"; listItemId: number }
-  | { type: "item-added"; listId: number; listItemId: number }
+  | { type: "lists-loaded"; lists: AllTodoLists; }
+  | { type: "title-changed"; listId: number; newTitle: string; }
+  | { type: "item-changed"; listId: number; newItemName: string; itemId: number; }
+  | { type: "list-removed"; listId: number; }
+  | { type: "item-removed"; listId: number; itemId: number; }
+  | { type: "list-added"; }
+  | { type: "item-added"; listId: number; }
   | { type: "item-marked"; listId: number; itemId: number; completed: boolean };
 
 export const ListsContext = createContext<AllTodoLists>([]);
@@ -99,7 +100,7 @@ function todosListReducer(todoLists: AllTodoLists, action: TodosAction): AllTodo
         ...todoLists,
         {
           listName: "",
-          id: action.listItemId,
+          id: createId(),
           listItems: [],
           timestamp: Date.now()
         },
@@ -119,7 +120,7 @@ function todosListReducer(todoLists: AllTodoLists, action: TodosAction): AllTodo
             ...list.listItems,
             {
               itemName: "",
-              id: action.listItemId,
+              id: createId(),
               timestamp: Date.now(),
               completed: false,
             },

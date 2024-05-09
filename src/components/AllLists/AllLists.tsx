@@ -48,8 +48,7 @@ export default function AllLists({ onSetView, onSetCurrentListId }: AllListsProp
           const newListId = Date.now();
 
           listsDispatch({
-            type: "list-added",
-            listItemId: newListId
+            type: "list-added"
           });
 
           onSetCurrentListId(newListId);

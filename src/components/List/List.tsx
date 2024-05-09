@@ -30,8 +30,7 @@ export default function List({ listIndex, onSetView }: ListProps) {
 
             listsDispatch({
               type: "item-added",
-              listId: list.id,
-              listItemId: newId
+              listId: list.id
             });
 
             setNewListItemId(newId);
