@@ -59,15 +59,15 @@ export function getLists(listsDispatch, abortObj) {
     const listItemsStore = listsTransaction.objectStore('listItems');
     const listItemsIndex = listItemsStore.index('listId');
 
-    const listsStoreCursorRequest = listsStore.openCursor();
+    const listsStoreRequest = listsStore.getAll();
 
-    console.log({listsStoreCursorRequest});
+    console.log({listsStoreRequest});
 
-    listsStoreCursorRequest.addEventListener('error', (event) => {
+    listsStoreRequest.addEventListener('error', (event) => {
       console.error(`Database error in getLists: ${event.target}`);
     });
 
-    listsStoreCursorRequest.addEventListener('success', (event) => {
+    listsStoreRequest.addEventListener('success', (event) => {
       if (abortObj.abort) {
         console.log('Aborting success event');
         return;
@@ -75,43 +75,31 @@ export function getLists(listsDispatch, abortObj) {
 
       console.log(abortObj);
       console.log('getLists cursor open success');
-      const cursor = event.target.result;
-      
-      if (cursor) {
-        cursor.value.id = cursor.primaryKey;
-        lists.push(cursor.value);
-        cursor.continue();
-      } else {
-        lists.forEach((list) => {
-          let listItems = [];
+      lists = event.target.result;
 
-          const listItemsIndexCursor = listItemsIndex.openCursor(list.id);
+      lists.forEach((list) => {
+        let listItems = [];
 
-          listItemsIndexCursor.addEventListener('error', (event) => {
-            console.error(`ListItemsCursor error: ${event.target}`);
-          });
+        const listItemsIndexRequest = listItemsIndex.getAll(list.id);
 
-          listItemsIndexCursor.addEventListener('success', (event) => {
-            const cursor = event.target.result;
-
-            if (cursor) {
-              cursor.value.id = cursor.primaryKey;
-              listItems.push(cursor.value);
-              cursor.continue();
-            } else {
-              list.listItems = listItems;
-            }
-          });
-
+        listItemsIndexRequest.addEventListener('error', (event) => {
+          console.error(`ListItemsCursor error: ${event.target}`);
         });
 
-        listsDispatch({
-          type: 'lists-loaded',
-          lists
-        })
+        listItemsIndexRequest.addEventListener('success', (event) => {
+          listItems = event.target.result;
 
-        console.log(lists);
-      }
+          list.listItems = listItems;
+        });
+
+      });
+
+      listsDispatch({
+        type: 'lists-loaded',
+        lists
+      })
+
+      console.log(lists);
     });
   });
 }
@@ -119,8 +107,8 @@ export function getLists(listsDispatch, abortObj) {
 function createDatabase(db) {
   console.log('createDatabase running');
 
-  const listsStore = db.createObjectStore('lists', { autoIncrement: true });
-  const listItemsStore = db.createObjectStore('listItems', { autoIncrement: true });
+  const listsStore = db.createObjectStore('lists', { keyPath: 'id', autoIncrement: true });
+  const listItemsStore = db.createObjectStore('listItems', { keyPath: 'id', autoIncrement: true });
 
   listItemsStore.createIndex('listId', 'listId', { unique: false });
 
