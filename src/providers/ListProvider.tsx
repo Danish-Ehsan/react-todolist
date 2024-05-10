@@ -10,7 +10,7 @@ type TodosAction =
   | { type: "item-changed"; listId: number; newItemName: string; itemId: number; }
   | { type: "list-removed"; listId: number; }
   | { type: "item-removed"; listId: number; itemId: number; }
-  | { type: "list-added"; }
+  | { type: "list-added"; listId: number; }
   | { type: "item-added"; listId: number; }
   | { type: "item-marked"; listId: number; itemId: number; completed: boolean };
 
@@ -100,7 +100,7 @@ function todosListReducer(todoLists: AllTodoLists, action: TodosAction): AllTodo
         ...todoLists,
         {
           listName: "",
-          id: createId(),
+          id: action.listId,
           listItems: [],
           timestamp: Date.now()
         },

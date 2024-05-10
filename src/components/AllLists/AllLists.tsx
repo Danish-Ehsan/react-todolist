@@ -3,6 +3,8 @@ import { ListsContext, ListsDispatchContext } from "../../providers/ListProvider
 import { ViewState } from "../../types";
 import TrashIcon from "../../assets/TrashIcon";
 import styles from "./AllLists.module.scss";
+//@ts-expect-error Don't have types for IndexedDB yet
+import { createId } from "../../utils/general";
 
 
 type AllListsProps = {
@@ -45,10 +47,11 @@ export default function AllLists({ onSetView, onSetCurrentListId }: AllListsProp
       <button
         className="button"
         onClick={() => {
-          const newListId = Date.now();
+          const newListId = createId();
 
           listsDispatch({
-            type: "list-added"
+            type: "list-added",
+            listId: newListId
           });
 
           onSetCurrentListId(newListId);
