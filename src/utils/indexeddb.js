@@ -180,3 +180,38 @@ function addMockData(db) {
     completed: false
   });
 }
+
+export function addList(list) {
+  console.log('addList running');
+  console.log(list);
+
+  const dbRequest = requestDatabase();
+
+  console.log(dbRequest);
+
+  dbRequest.addEventListener('success', (event) => {
+    console.log('addList db success');
+    const db = event.target.result;
+
+    const listsTransaction = db.transaction(['lists'], 'readwrite');
+    const listsStore = listsTransaction.objectStore('lists');
+
+    listsTransaction.addEventListener('error', (event) => {
+      console.error(`Database error adding list: ${event.target.err}`);
+    });
+
+    listsTransaction.addEventListener('complete', () => {
+      console.log('List added successfully');
+    });
+
+    const listStoreRequest =  listsStore.put(list);
+
+    listStoreRequest.addEventListener('success', () => {
+      console.log('listStoreRequest success');
+    });
+
+    listStoreRequest.addEventListener('error', (event) => {
+      console.log(`listStoreRequest error: ${event.target.err}`);
+    });
+  });
+}
