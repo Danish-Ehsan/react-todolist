@@ -1,3 +1,5 @@
+import { createId } from './general';
+
 function openDatabase() {
   let dbRequest;
 
@@ -107,8 +109,8 @@ export function getLists(listsDispatch, abortObj) {
 function createDatabase(db) {
   console.log('createDatabase running');
 
-  const listsStore = db.createObjectStore('lists', { keyPath: 'id', autoIncrement: true });
-  const listItemsStore = db.createObjectStore('listItems', { keyPath: 'id', autoIncrement: true });
+  const listsStore = db.createObjectStore('lists', { keyPath: 'id' });
+  const listItemsStore = db.createObjectStore('listItems', { keyPath: 'id' });
 
   listItemsStore.createIndex('listId', 'listId', { unique: false });
 
@@ -135,16 +137,19 @@ function addMockData(db) {
   });
 
   listsStore.add({
+    id: createId(),
     listName: 'Foo',
     timestamp: 1714710594045
   });
 
   listsStore.add({
+    id: createId(),
     listName: 'Bar',
     timestamp: 1714710594046
   });
 
   listsItemsStore.add({
+    id: createId(),
     listId: 1,
     itemName: 'Foo Item one',
     timestamp: 1714710594047,
@@ -152,6 +157,7 @@ function addMockData(db) {
   });
 
   listsItemsStore.add({
+    id: createId(),
     listId: 1,
     itemName: 'Foo Item two',
     timestamp: 1714710594048,
@@ -159,6 +165,7 @@ function addMockData(db) {
   });
 
   listsItemsStore.add({
+    id: createId(),
     listId: 2,
     itemName: 'Bar Item one',
     timestamp: 1714710594049,
@@ -166,6 +173,7 @@ function addMockData(db) {
   });
 
   listsItemsStore.add({
+    id: createId(),
     listId: 2,
     itemName: 'Bar Item two',
     timestamp: 1714710594050,
