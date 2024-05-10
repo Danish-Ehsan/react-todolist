@@ -7,9 +7,9 @@ function openDatabase() {
   return function() {
     console.log('requestDatabase firing');
 
-    if (dbRequest) {
-      return dbRequest;
-    }
+    // if (dbRequest) {
+    //   return dbRequest;
+    // }
 
     dbRequest = window.indexedDB.open('listDatabase', 1);
 
