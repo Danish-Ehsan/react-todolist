@@ -4,7 +4,7 @@ import useResizeTextarea from "../../hooks/useResizeTextarea";
 import { ListsDispatchContext } from "../../providers/ListProvider";
 import { AllTodoLists } from "../../types";
 //@ts-expect-error Don't have types for IndexedDB yet
-import { setList } from "../../utils/indexeddb";
+import { setDBList } from "../../utils/indexeddb";
 
 type ListTitleProps = {
   list: AllTodoLists[0]
@@ -31,7 +31,7 @@ export default function ListTitle({ list }: ListTitleProps) {
           newTitle: e.target.value,
         });
 
-        setList({
+        setDBList({
           id: list.id,
           listName: e.target.value,
           timestamp: list.timestamp
