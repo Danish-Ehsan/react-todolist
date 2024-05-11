@@ -3,6 +3,7 @@ import ListItem from "../ListItem/ListItem";
 import ListTitle from "../ListTitle/ListTitle";
 import { ViewState } from "../../types";
 import { ListsContext, ListsDispatchContext } from "../../providers/ListProvider";
+import { createId } from "../../utils/general";
 //@ts-expect-error Don't have types for IndexedDB yet
 import { setDBListItem } from "../../utils/indexeddb";
 
@@ -18,6 +19,7 @@ export default function List({ listIndex, onSetView }: ListProps) {
   const list = allLists[listIndex];
 
   const listItemElems = list.listItems.map((listItem) => {
+    console.log(listItem.id, newListItemId);
     return <ListItem listItem={listItem} listId={list.id} shouldAutoFocus={listItem.id === newListItemId} key={listItem.id.toString()} />;
   });
 
@@ -28,11 +30,12 @@ export default function List({ listIndex, onSetView }: ListProps) {
       <button className="button" 
         onClick={
           () => {
-            const newId = Date.now();
+            const newId = createId();
 
             listsDispatch({
               type: "item-added",
-              listId: list.id
+              listId: list.id,
+              itemId: newId
             });
 
             setNewListItemId(newId);

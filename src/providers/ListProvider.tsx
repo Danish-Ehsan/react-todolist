@@ -1,6 +1,5 @@
 import { createContext, useReducer } from "react";
 import { AllTodoLists } from "../types";
-import { createId } from "../utils/general";
 
 type ListsProviderProps = { children: React.ReactNode }
 
@@ -11,7 +10,7 @@ type TodosAction =
   | { type: "list-removed"; listId: number; }
   | { type: "item-removed"; listId: number; itemId: number; }
   | { type: "list-added"; listId: number; }
-  | { type: "item-added"; listId: number; }
+  | { type: "item-added"; listId: number; itemId: number }
   | { type: "item-marked"; listId: number; itemId: number; completed: boolean };
 
 export const ListsContext = createContext<AllTodoLists>([]);
@@ -120,7 +119,7 @@ function todosListReducer(todoLists: AllTodoLists, action: TodosAction): AllTodo
             ...list.listItems,
             {
               itemName: "",
-              id: createId(),
+              id: action.itemId,
               listId: action.listId,
               timestamp: Date.now(),
               completed: false,
