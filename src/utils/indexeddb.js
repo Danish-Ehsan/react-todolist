@@ -209,3 +209,25 @@ export async function setDBList(list) {
   }
   
 }
+
+export async function setDBListItem(listItem) {
+  console.log('setListItem running');
+  console.log(listItem);
+
+  try {
+    const db = await getDatabase();
+
+    const listItemsTransaction = db.transaction(['listItems'], 'readwrite');
+    const listItemsStore = listItemsTransaction.objectStore('listItems');
+
+    try {
+      await listItemsStore.put(listItem);
+      console.log('list item updated');
+    } catch(err) {
+      console.error(`Database error adding list item: ${err.message}`);
+    } 
+  } catch(err) {
+    console.error(`Database error creating list items transaction: ${err.message}`);
+    console.log(err);
+  }
+}

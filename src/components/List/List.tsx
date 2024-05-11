@@ -3,6 +3,8 @@ import ListItem from "../ListItem/ListItem";
 import ListTitle from "../ListTitle/ListTitle";
 import { ViewState } from "../../types";
 import { ListsContext, ListsDispatchContext } from "../../providers/ListProvider";
+//@ts-expect-error Don't have types for IndexedDB yet
+import { setDBListItem } from "../../utils/indexeddb";
 
 type ListProps = {
   listIndex: number;
@@ -34,6 +36,13 @@ export default function List({ listIndex, onSetView }: ListProps) {
             });
 
             setNewListItemId(newId);
+
+            setDBListItem({
+              id: newId,
+              listId: list.id,
+              itemName: '',
+              completed: false
+            });
           }
         }>
         + Add Item
