@@ -7,6 +7,7 @@ export type AllTodoLists = {
   listItems: {
     itemName: string;
     id: number;
+    listId: number;
     timestamp: number;
     completed: boolean;
   }[];

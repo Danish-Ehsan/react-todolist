@@ -121,6 +121,7 @@ function todosListReducer(todoLists: AllTodoLists, action: TodosAction): AllTodo
             {
               itemName: "",
               id: createId(),
+              listId: action.listId,
               timestamp: Date.now(),
               completed: false,
             },
