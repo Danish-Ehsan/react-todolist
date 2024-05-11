@@ -38,7 +38,7 @@ async function getDatabase(abortObj) {
   return db;
 }
 
-export async function getLists(listsDispatch, abortObj) {
+export async function getDBLists(listsDispatch, abortObj) {
   console.log('getLists running');
 
   console.log('getLists success 1 event');
@@ -177,7 +177,7 @@ async function addMockData(db) {
     .catch((err) => console.error(`Database error adding mock data: ${err.message}`) );
 }
 
-export async function setList(list) {
+export async function setDBList(list) {
   console.log('addList running');
   console.log(list);
 

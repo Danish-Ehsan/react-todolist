@@ -5,7 +5,7 @@ import List from "./components/List/List";
 import { ViewState } from "./types";
 import { ListsContext, ListsDispatchContext } from "./providers/ListProvider.tsx";
 //@ts-expect-error Don't have types for IndexedDB yet
-import { getLists } from './utils/indexeddb.js';
+import { getDBLists } from './utils/indexeddb.js';
 
 function App() {
   const [view, setView] = useState<ViewState>("allLists");
@@ -24,7 +24,7 @@ function App() {
   useEffect(() => {
     console.log('App useEffect firing');
     const abortObj = { abort: false };
-    getLists(listsDispatch, abortObj);
+    getDBLists(listsDispatch, abortObj);
 
     //return function has closure over abortObj
     return () => {
