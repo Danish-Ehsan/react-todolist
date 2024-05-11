@@ -198,12 +198,13 @@ export async function setDBList(list) {
 
     try {
       await listsStore.put(list);
+      console.log('list updated');
     } catch(err) {
       console.error(`Database error adding list: ${err.message}`);
     }
 
   } catch(err) {
-    console.error(`Database error adding list: ${err.message}`);
+    console.error(`Database error creating list transaction: ${err.message}`);
     console.log(err);
   }
   
