@@ -21,7 +21,7 @@ export default function List({ listIndex, onSetView }: ListProps) {
 
   return (
     <>
-      <ListTitle listTitle={list.listName} listId={list.id} />
+      <ListTitle list={list} />
       {listItemElems}
       <button className="button" 
         onClick={

@@ -4,7 +4,7 @@ import { ViewState } from "../../types";
 import TrashIcon from "../../assets/TrashIcon";
 import styles from "./AllLists.module.scss";
 //@ts-expect-error Don't have types for IndexedDB yet
-import { addList } from '../../utils/indexeddb';
+import { setList } from '../../utils/indexeddb';
 import { createId } from "../../utils/general";
 
 
@@ -55,7 +55,7 @@ export default function AllLists({ onSetView, onSetCurrentListId }: AllListsProp
             listId: newListId
           });
 
-          addList({ id: newListId, listName: '', timestamp: Date.now() });
+          setList({ id: newListId, listName: '', timestamp: Date.now() });
 
           onSetCurrentListId(newListId);
           onSetView('singleList');

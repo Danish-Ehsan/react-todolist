@@ -1,59 +1,60 @@
+import { openDB } from 'idb';
 import { createId } from './general';
 
-function openDatabase() {
-  let dbRequest;
+async function getDatabase(abortObj) {
+  console.log('getDatabase firing');
 
-  //Create closure over request variable to keep reference to open database object
-  return function() {
-    console.log('requestDatabase firing');
+  const db = await openDB('listDatabase', 1, {
+    upgrade(db, oldVersion, newVersion, transaction) {
+      console.log('onupgrade firing');
 
-    // if (dbRequest) {
-    //   return dbRequest;
-    // }
+      // If the object store does not exist, create it:
+      if (!db.objectStoreNames.contains('listDatabase')) {
+        console.log('onupgrade if condition firing');
+        createDatabase(db);
+        transaction.done.then(() => {
+          addMockData(db);
+        });
+        return;
+      }
+    },
+    blocked(currentVersion, blockedVersion, event) {
+      console.error(`Database error opening database connection: ${event.target}`);
+    },
+    blocking(currentVersion, blockedVersion, event) {
+      console.error(`Database error opening database connection: ${event.target}`);
+    },
+    terminated() {
+      console.error(`Database unexpectedly terminated`);
+    }
+  });
 
-    dbRequest = window.indexedDB.open('listDatabase', 1);
-
-    dbRequest.addEventListener('error', (event) => {
-      console.error(`Database error opening database connection: ${event.target.err}`);
-    });
-
-    dbRequest.addEventListener('success', () => {
-      console.log('Database connection opened');
-    });
-
-    dbRequest.addEventListener('upgradeneeded', (event) => {
-      createDatabase(event.target.result);
-    });
-
-    return dbRequest;
+  if (abortObj?.abort) {
+    console.log('Aborting request');
+    db.close();
+    return db;
   }
+
+  return db;
 }
 
-const requestDatabase = openDatabase();
-
-export function getLists(listsDispatch, abortObj) {
+export async function getLists(listsDispatch, abortObj) {
   console.log('getLists running');
 
-  if (abortObj.abort) {
-    console.log('Aborting request');
-    return;
-  }
+  console.log('getLists success 1 event');
 
   let lists = [];
 
-  const dbRequest = requestDatabase();
+  try {
+    const db = await getDatabase(abortObj);
 
-  console.log({dbRequest});
-
-  dbRequest.addEventListener('success', (event) => {
-    
     if (abortObj.abort) {
       console.log('Aborting request');
+      db.close();
       return;
     }
 
-    console.log('getLists success event');
-    const db = event.target.result;
+    console.log('getLists success 2 event');
 
     const listsTransaction = db.transaction(['lists', 'listItems']);
     const listsStore = listsTransaction.objectStore('lists');
@@ -61,40 +62,36 @@ export function getLists(listsDispatch, abortObj) {
     const listItemsStore = listsTransaction.objectStore('listItems');
     const listItemsIndex = listItemsStore.index('listId');
 
-    const listsStoreRequest = listsStore.getAll();
+    try {
+      lists = await listsStore.getAll();
 
-    console.log({listsStoreRequest});
+      console.log({listsStore});
 
-    listsStoreRequest.addEventListener('error', (event) => {
-      console.error(`Database error in getLists: ${event.target}`);
-    });
-
-    listsStoreRequest.addEventListener('success', (event) => {
       if (abortObj.abort) {
         console.log('Aborting success event');
+        db.close();
         return;
       }
 
       console.log(abortObj);
       console.log('getLists cursor open success');
-      lists = event.target.result;
 
-      lists.forEach((list) => {
-        let listItems = [];
+      lists.forEach(async (list) => {
 
-        const listItemsIndexRequest = listItemsIndex.getAll(list.id);
+        try {
+          const listItems = await listItemsIndex.getAll(list.id);
+          
+          list.listItems = listItems.length ? listItems : [];
 
-        listItemsIndexRequest.addEventListener('error', (event) => {
-          console.error(`ListItemsCursor error: ${event.target}`);
-        });
-
-        listItemsIndexRequest.addEventListener('success', (event) => {
-          listItems = event.target.result;
-
-          list.listItems = listItems;
-        });
-
+        } catch(err) {
+          console.error(`Database error getting list items: ${err.message}`);
+        }
       });
+
+      if (abortObj.abort) {
+        console.log('Aborting success event');
+        return;
+      }
 
       listsDispatch({
         type: 'lists-loaded',
@@ -102,24 +99,32 @@ export function getLists(listsDispatch, abortObj) {
       })
 
       console.log(lists);
-    });
-  });
+
+    } catch(err) {
+      console.error(`Database error getting listStore: ${err.message}`);
+    }
+
+  } catch(err) {
+    console.error(`Database error getting lists: ${err.message}`);
+  }
+  
 }
 
 function createDatabase(db) {
   console.log('createDatabase running');
 
-  const listsStore = db.createObjectStore('lists', { keyPath: 'id' });
-  const listItemsStore = db.createObjectStore('listItems', { keyPath: 'id' });
+  try {
+    db.createObjectStore('lists', { keyPath: 'id' });
+    const listItemsStore = db.createObjectStore('listItems', { keyPath: 'id' });
 
-  listItemsStore.createIndex('listId', 'listId', { unique: false });
-
-  listsStore.transaction.addEventListener('complete', () => {
-    addMockData(db);
-  });
+    listItemsStore.createIndex('listId', 'listId', { unique: false });
+    console.log('createDatabase ending');
+  } catch(err) {
+    console.log(`Error creating database: ${err.message}`);
+  }
 }
 
-function addMockData(db) {
+async function addMockData(db) {
   console.log('addMockData firing');
 
   const listsTransaction = db.transaction(['lists', 'listItems'], 'readwrite');
@@ -128,90 +133,71 @@ function addMockData(db) {
 
   console.log({listsTransaction});
 
-  listsTransaction.addEventListener('error', (event) => {
-    console.log(`Database error in AddMock Data: ${event.target}`)
-  });
-
-  listsTransaction.addEventListener('complete', () => {
-    console.log('Successfully added lists');
-  });
-
-  listsStore.add({
-    id: createId(),
-    listName: 'Foo',
-    timestamp: 1714710594045
-  });
-
-  listsStore.add({
-    id: createId(),
-    listName: 'Bar',
-    timestamp: 1714710594046
-  });
-
-  listsItemsStore.add({
-    id: createId(),
-    listId: 1,
-    itemName: 'Foo Item one',
-    timestamp: 1714710594047,
-    completed: false
-  });
-
-  listsItemsStore.add({
-    id: createId(),
-    listId: 1,
-    itemName: 'Foo Item two',
-    timestamp: 1714710594048,
-    completed: false
-  });
-
-  listsItemsStore.add({
-    id: createId(),
-    listId: 2,
-    itemName: 'Bar Item one',
-    timestamp: 1714710594049,
-    completed: false
-  });
-
-  listsItemsStore.add({
-    id: createId(),
-    listId: 2,
-    itemName: 'Bar Item two',
-    timestamp: 1714710594050,
-    completed: false
-  });
+  await Promise.all([
+    listsStore.add({
+      id: createId(),
+      listName: 'Foo',
+      timestamp: 1714710594045
+    }),
+    listsStore.add({
+      id: createId(),
+      listName: 'Bar',
+      timestamp: 1714710594046
+    }),
+    listsItemsStore.add({
+      id: createId(),
+      listId: 1,
+      itemName: 'Foo Item one',
+      timestamp: 1714710594047,
+      completed: false
+    }),
+    listsItemsStore.add({
+      id: createId(),
+      listId: 1,
+      itemName: 'Foo Item two',
+      timestamp: 1714710594048,
+      completed: false
+    }),
+    listsItemsStore.add({
+      id: createId(),
+      listId: 2,
+      itemName: 'Bar Item one',
+      timestamp: 1714710594049,
+      completed: false
+    }),
+    listsItemsStore.add({
+      id: createId(),
+      listId: 2,
+      itemName: 'Bar Item two',
+      timestamp: 1714710594050,
+      completed: false
+    }),
+  ])
+    .then(() => console.log('Mock data added'))
+    .catch((err) => console.error(`Database error adding mock data: ${err.message}`) );
 }
 
-export function addList(list) {
+export async function setList(list) {
   console.log('addList running');
   console.log(list);
 
-  const dbRequest = requestDatabase();
+  try {
+    const db = await getDatabase();
 
-  console.log(dbRequest);
-
-  dbRequest.addEventListener('success', (event) => {
     console.log('addList db success');
-    const db = event.target.result;
 
     const listsTransaction = db.transaction(['lists'], 'readwrite');
     const listsStore = listsTransaction.objectStore('lists');
 
-    listsTransaction.addEventListener('error', (event) => {
-      console.error(`Database error adding list: ${event.target.err}`);
-    });
+    try {
+      await listsStore.put(list);
+    } catch(err) {
+      console.error(`Database error adding list: ${err.message}`);
+    }
 
-    listsTransaction.addEventListener('complete', () => {
-      console.log('List added successfully');
-    });
-
-    const listStoreRequest =  listsStore.put(list);
-
-    listStoreRequest.addEventListener('success', () => {
-      console.log('listStoreRequest success');
-    });
-
-    listStoreRequest.addEventListener('error', (event) => {
-      console.log(`listStoreRequest error: ${event.target.err}`);
-    });
-  });
+  } catch(err) {
+    console.error(`Database error adding list: ${err.message}`);
+    console.log(err);
+  }
+  
 }

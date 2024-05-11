@@ -2,31 +2,39 @@ import { useRef, useContext } from "react";
 import styles from "../List/List.module.scss";
 import useResizeTextarea from "../../hooks/useResizeTextarea";
 import { ListsDispatchContext } from "../../providers/ListProvider";
+import { AllTodoLists } from "../../types";
+//@ts-expect-error Don't have types for IndexedDB yet
+import { setList } from "../../utils/indexeddb";
 
 type ListTitleProps = {
-  listTitle: string;
-  listId: number;
+  list: AllTodoLists[0]
 };
 
-export default function ListTitle({ listTitle, listId }: ListTitleProps) {
+export default function ListTitle({ list }: ListTitleProps) {
   const listsDispatch = useContext(ListsDispatchContext);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  useResizeTextarea(textareaRef, listTitle);
+  useResizeTextarea(textareaRef, list.listName);
 
   return (
     <textarea
       className={`${styles.listTitle} ${styles.listTextarea}`}
-      value={listTitle}
+      value={list.listName}
       rows={1}
       ref={textareaRef}
       placeholder="List Title"
-      autoFocus={listTitle === ''}
+      autoFocus={list.listName === ''}
       onChange={(e) => {
         listsDispatch({
           type: "title-changed",
-          listId: listId,
+          listId: list.id,
           newTitle: e.target.value,
+        });
+
+        setList({
+          id: list.id,
+          listName: e.target.value,
+          timestamp: list.timestamp
         });
       }}
     />
