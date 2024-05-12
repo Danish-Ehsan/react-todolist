@@ -2,7 +2,7 @@ import { useState, useContext, useEffect } from "react";
 import styles from "./App.module.scss";
 import AllLists from "./components/AllLists/AllLists";
 import List from "./components/List/List";
-import { ViewState } from "./types";
+import { AllTodoLists, ViewState } from "./types";
 import { ListsContext, ListsDispatchContext } from "./providers/ListProvider.tsx";
 //@ts-expect-error Don't have types for IndexedDB yet
 import { getDBLists } from './utils/indexeddb.js';
@@ -24,10 +24,24 @@ function App() {
   useEffect(() => {
     console.log('App useEffect firing');
     const abortObj = { abort: false };
-    getDBLists(listsDispatch, abortObj);
+    const newLists = getDBLists(abortObj);
+    let effectCancelled = false;
+
+    newLists.then((lists: AllTodoLists) => { 
+      console.log('newLists promise succeeded');
+      console.log(lists);
+
+      if (!effectCancelled) {
+        listsDispatch({
+          type: 'lists-loaded',
+          lists
+        });
+      }
+    })
 
     //return function has closure over abortObj
     return () => {
+      effectCancelled = true;
       console.log('useEffect cleanup firing');
       abortObj.abort = true;
     }

@@ -97,14 +97,6 @@ export async function getDBLists(listsDispatch, abortObj) {
         return;
       }
 
-      listsTransaction.done.then( () => {
-        console.log(lists);
-        listsDispatch({
-          type: 'lists-loaded',
-          lists
-        });
-      });
-
       console.log(lists);
 
     } catch(err) {
@@ -114,7 +106,8 @@ export async function getDBLists(listsDispatch, abortObj) {
   } catch(err) {
     console.error(`Database error getting lists: ${err.message}`);
   }
-  
+
+  return lists;
 }
 
 function createDatabase(db) {
