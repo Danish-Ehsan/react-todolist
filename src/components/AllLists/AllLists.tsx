@@ -3,7 +3,7 @@ import { ListsContext, ListsDispatchContext } from "../../providers/ListProvider
 import { ViewState } from "../../types";
 import TrashIcon from "../../assets/TrashIcon";
 import styles from "./AllLists.module.scss";
-import { setDBList } from '../../utils/indexeddb';
+import { setDBList, deleteDBList } from '../../utils/indexeddb';
 import { createId } from "../../utils/general";
 
 
@@ -28,11 +28,14 @@ export default function AllLists({ onSetView, onSetCurrentListId }: AllListsProp
         >
           {todosList.listName ? todosList.listName : <em>Untitled</em>}
         </button>
-        <button onClick={() => 
+        <button onClick={() => {
           listsDispatch({
             type: "list-removed",
             listId: todosList.id,
-          })} 
+          });
+
+          deleteDBList(todosList.id);
+        }} 
           className={styles.trashBtn}>
           <TrashIcon className={styles.trashIcon} />
         </button>

@@ -9,7 +9,7 @@ interface ListDatabase extends DBSchema {
       listName?: string;
       timestamp?: number;
     };
-    key: string;
+    key: number;
   };
   listItems: {
     value: {
@@ -311,6 +311,54 @@ export async function deleteDBListItem(key: number) {
     try {
       await listItemsStore.delete(key);
       console.log("List item deleted");
+    } catch(err) {
+      if (err instanceof Error) {
+        console.error(`Database error deleting list transaction: ${err.message}`);
+      } else {
+        console.error(`Database error getting list items`);
+      }
+    }
+
+  } catch(err) {
+    if (err instanceof Error) {
+      console.error(`Database transaction error deleting list item: ${err.message}`);
+    } else {
+      console.error(`Database transaction error deleting list items`);
+    }
+  }
+}
+
+export async function deleteDBList(key: number) {
+  console.log('deleteDBList running');
+  console.log(key);
+
+  try {
+    const db = await getDatabase();
+
+    const listItemsTransaction = db.transaction(['lists', 'listItems'], 'readwrite');
+    const listsStore = listItemsTransaction.objectStore('lists');
+    const listItemsStore = listItemsTransaction.objectStore('listItems');
+    const listItemsIndex = listItemsStore.index('listId');
+
+    try {
+      await listsStore.delete(key);
+      console.log("List deleted");
+
+      try {
+        let cursor = await listItemsIndex.openCursor(key);
+
+        while(cursor) {
+          cursor.delete();
+          cursor = await cursor.continue();
+        }
+      } catch(err) {
+        if (err instanceof Error) {
+          console.error(`Database error deleting list items of list: ${err.message}`);
+        } else {
+          console.error(`Database error deleting list items of list`);
+        }
+      }
+
     } catch(err) {
       if (err instanceof Error) {
         console.error(`Database error deleting list transaction: ${err.message}`);
