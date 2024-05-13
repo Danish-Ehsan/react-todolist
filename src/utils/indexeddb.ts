@@ -1,15 +1,57 @@
-import { openDB } from 'idb';
+import { openDB, DBSchema, IDBPDatabase } from 'idb';
 import { createId } from './general';
+import { AllTodoLists } from '../types';
 
-async function getDatabase(abortObj) {
+interface ListDatabase extends DBSchema {
+  lists: {
+    value: {
+      id: number;
+      listName?: string;
+      timestamp?: number;
+    };
+    key: string;
+  };
+  listItems: {
+    value: {
+      id: number;
+      listId?: number;
+      itemName?: string;
+      timestamp?: number;
+      completed?: boolean;
+    };
+    key: number;
+    indexes: { listId: number };
+  };
+}
+
+type ListStore = {
+  id: number;
+  listName?: string;
+  timestamp?: number;
+  listItems?: ListItemStore[];
+}
+
+type ListItemStore = {
+  id: number;
+  listId?: number;
+  itemName?: string;
+  timestamp?: number;
+  completed?: boolean;
+}
+
+type AbortObj = {
+  abort: boolean
+} | null
+
+async function getDatabase(abortObj: AbortObj = null) {
   console.log('getDatabase firing');
 
-  const db = await openDB('listDatabase', 1, {
-    upgrade(db, oldVersion, newVersion, transaction) {
+  const db = await openDB<ListDatabase>('listDatabase', 1, {
+    upgrade(db, _oldVersion, _newVersion, transaction) {
       console.log('onupgrade firing');
 
       // If the object store does not exist, create it:
-      if (!db.objectStoreNames.contains('listDatabase')) {
+      if (!db.objectStoreNames.contains('lists')) {
         console.log('onupgrade if condition firing');
         createDatabase(db);
         transaction.done.then(() => {
@@ -18,10 +60,10 @@ async function getDatabase(abortObj) {
         return;
       }
     },
-    blocked(currentVersion, blockedVersion, event) {
+    blocked(_currentVersion, _blockedVersion, event) {
       console.error(`Database error opening database connection: ${event.target}`);
     },
-    blocking(currentVersion, blockedVersion, event) {
+    blocking(_currentVersion, _blockedVersion, event) {
       console.error(`Database error opening database connection: ${event.target}`);
     },
     terminated() {
@@ -38,17 +80,17 @@ async function getDatabase(abortObj) {
   return db;
 }
 
-export async function getDBLists(listsDispatch, abortObj) {
+export async function getDBLists(abortObj:AbortObj): Promise<AllTodoLists | undefined> {
   console.log('getLists running');
 
   console.log('getLists success 1 event');
 
-  let lists = [];
+  let lists: ListStore[] = [];
 
   try {
     const db = await getDatabase(abortObj);
 
-    if (abortObj.abort) {
+    if (abortObj?.abort) {
       console.log('Aborting request');
       db.close();
       return;
@@ -67,7 +109,7 @@ export async function getDBLists(listsDispatch, abortObj) {
 
       console.log({listsStore});
 
-      if (abortObj.abort) {
+      if (abortObj?.abort) {
         console.log('Aborting success event');
         db.close();
         return;
@@ -88,11 +130,15 @@ export async function getDBLists(listsDispatch, abortObj) {
           console.log(listItems);
 
         } catch(err) {
-          console.error(`Database error getting list items: ${err.message}`);
+          if (err instanceof Error) {
+            console.error(`Database error getting list items: ${err.message}`);
+          } else {
+            console.error(`Database error getting list items`);
+          }
         }
       });
 
-      if (abortObj.abort) {
+      if (abortObj?.abort) {
         console.log('Aborting success event');
         return;
       }
@@ -100,17 +146,25 @@ export async function getDBLists(listsDispatch, abortObj) {
       console.log(lists);
 
     } catch(err) {
-      console.error(`Database error getting listStore: ${err.message}`);
+      if (err instanceof Error) {
+        console.error(`Database error getting listStore: ${err.message }`);
+      } else {
+        console.error(`Database error getting list items`);
+      }
     }
 
   } catch(err) {
-    console.error(`Database error getting lists: ${err.message}`);
+    if (err instanceof Error) {
+      console.error(`Database error getting lists: ${err.message}`);
+    } else {
+      console.error(`Database error getting list items`);
+    }
   }
 
-  return lists;
+  return lists as AllTodoLists;
 }
 
-function createDatabase(db) {
+function createDatabase(db: IDBPDatabase<ListDatabase>) {
   console.log('createDatabase running');
 
   try {
@@ -120,11 +174,15 @@ function createDatabase(db) {
     listItemsStore.createIndex('listId', 'listId', { unique: false });
     console.log('createDatabase ending');
   } catch(err) {
-    console.log(`Error creating database: ${err.message}`);
+    if (err instanceof Error) {
+      console.log(`Error creating database: ${err.message}`);
+    } else {
+      console.error(`Database error getting list items`);
+    }
   }
 }
 
-async function addMockData(db) {
+async function addMockData(db: IDBPDatabase<ListDatabase>) {
   console.log('addMockData firing');
 
   const listsTransaction = db.transaction(['lists', 'listItems'], 'readwrite');
@@ -177,7 +235,7 @@ async function addMockData(db) {
     .catch((err) => console.error(`Database error adding mock data: ${err.message}`) );
 }
 
-export async function setDBList(list) {
+export async function setDBList(list: ListStore) {
   console.log('addList running');
   console.log(list);
 
@@ -193,17 +251,25 @@ export async function setDBList(list) {
       await listsStore.put(list);
       console.log('list updated');
     } catch(err) {
-      console.error(`Database error adding list: ${err.message}`);
+      if (err instanceof Error) {
+        console.error(`Database error adding list: ${err.message}`);
+      } else {
+        console.error(`Database error getting list items`);
+      }
+      
     }
 
   } catch(err) {
-    console.error(`Database error creating list transaction: ${err.message}`);
-    console.log(err);
+    if (err instanceof Error) {
+      console.error(`Database error creating list transaction: ${err.message}`);
+    } else {
+      console.error(`Database error getting list items`);
+    }
   }
   
 }
 
-export async function setDBListItem(listItem) {
+export async function setDBListItem(listItem: ListItemStore) {
   console.log('setListItem running');
   console.log(listItem);
 
@@ -217,10 +283,17 @@ export async function setDBListItem(listItem) {
       await listItemsStore.put(listItem);
       console.log('list item updated');
     } catch(err) {
-      console.error(`Database error adding list item: ${err.message}`);
+      if (err instanceof Error) {
+        console.error(`Database error adding list item: ${err.message}`);
+      } else {
+        console.error(`Database error getting list items`);
+      }
     } 
   } catch(err) {
-    console.error(`Database error creating list items transaction: ${err.message}`);
-    console.log(err);
+    if (err instanceof Error) {
+      console.error(`Database error creating list items transaction: ${err.message}`);
+    } else {
+      console.error(`Database error getting list items`);
+    }
   }
 }

@@ -5,8 +5,7 @@ import listStyles from "../List/List.module.scss";
 import TrashIcon from "../../assets/TrashIcon";
 import useResizeTextarea from "../../hooks/useResizeTextarea";
 import { ListsDispatchContext } from "../../providers/ListProvider";
-//@ts-expect-error Don't have types for IndexedDB yet
-import { setDBListItem } from "../../utils/indexeddb";
+import { setDBListItem } from "../../utils/indexeddb.ts";
 
 type ListItemProps = {
   shouldAutoFocus: boolean;

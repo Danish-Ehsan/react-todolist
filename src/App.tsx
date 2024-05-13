@@ -2,10 +2,9 @@ import { useState, useContext, useEffect } from "react";
 import styles from "./App.module.scss";
 import AllLists from "./components/AllLists/AllLists";
 import List from "./components/List/List";
-import { AllTodoLists, ViewState } from "./types";
+import { ViewState } from "./types";
 import { ListsContext, ListsDispatchContext } from "./providers/ListProvider.tsx";
-//@ts-expect-error Don't have types for IndexedDB yet
-import { getDBLists } from './utils/indexeddb.js';
+import { getDBLists } from './utils/indexeddb.ts';
 
 function App() {
   const [view, setView] = useState<ViewState>("allLists");
@@ -27,11 +26,11 @@ function App() {
     const newLists = getDBLists(abortObj);
     let effectCancelled = false;
 
-    newLists.then((lists: AllTodoLists) => { 
+    newLists.then((lists) => { 
       console.log('newLists promise succeeded');
       console.log(lists);
 
-      if (!effectCancelled) {
+      if (!effectCancelled && lists) {
         listsDispatch({
           type: 'lists-loaded',
           lists

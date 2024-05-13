@@ -4,8 +4,7 @@ import ListTitle from "../ListTitle/ListTitle";
 import { ViewState } from "../../types";
 import { ListsContext, ListsDispatchContext } from "../../providers/ListProvider";
 import { createId } from "../../utils/general";
-//@ts-expect-error Don't have types for IndexedDB yet
-import { setDBListItem } from "../../utils/indexeddb";
+import { setDBListItem } from "../../utils/indexeddb.ts";
 
 type ListProps = {
   listIndex: number;
@@ -44,7 +43,8 @@ export default function List({ listIndex, onSetView }: ListProps) {
               id: newId,
               listId: list.id,
               itemName: '',
-              completed: false
+              completed: false,
+              timestamp: Date.now()
             });
           }
         }>
