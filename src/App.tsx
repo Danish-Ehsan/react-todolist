@@ -4,7 +4,7 @@ import AllLists from "./components/AllLists/AllLists";
 import List from "./components/List/List";
 import { ViewState } from "./types";
 import { ListsContext, ListsDispatchContext } from "./providers/ListProvider.tsx";
-import { getDBLists } from './utils/indexeddb.ts';
+import { getDBLists } from './utils/indexeddb';
 
 function App() {
   const [view, setView] = useState<ViewState>("allLists");

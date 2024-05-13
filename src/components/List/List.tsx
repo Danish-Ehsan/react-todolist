@@ -4,7 +4,7 @@ import ListTitle from "../ListTitle/ListTitle";
 import { ViewState } from "../../types";
 import { ListsContext, ListsDispatchContext } from "../../providers/ListProvider";
 import { createId } from "../../utils/general";
-import { setDBListItem } from "../../utils/indexeddb.ts";
+import { setDBListItem } from "../../utils/indexeddb";
 
 type ListProps = {
   listIndex: number;

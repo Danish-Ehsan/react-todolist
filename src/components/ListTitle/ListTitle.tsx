@@ -3,7 +3,6 @@ import styles from "../List/List.module.scss";
 import useResizeTextarea from "../../hooks/useResizeTextarea";
 import { ListsDispatchContext } from "../../providers/ListProvider";
 import { AllTodoLists } from "../../types";
-//@ts-expect-error Don't have types for IndexedDB yet
 import { setDBList } from "../../utils/indexeddb";
 
 type ListTitleProps = {

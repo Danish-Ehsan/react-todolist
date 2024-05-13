@@ -5,7 +5,7 @@ import listStyles from "../List/List.module.scss";
 import TrashIcon from "../../assets/TrashIcon";
 import useResizeTextarea from "../../hooks/useResizeTextarea";
 import { ListsDispatchContext } from "../../providers/ListProvider";
-import { setDBListItem } from "../../utils/indexeddb.ts";
+import { setDBListItem } from "../../utils/indexeddb";
 
 type ListItemProps = {
   shouldAutoFocus: boolean;

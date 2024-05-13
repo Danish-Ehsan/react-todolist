@@ -3,7 +3,7 @@ import { ListsContext, ListsDispatchContext } from "../../providers/ListProvider
 import { ViewState } from "../../types";
 import TrashIcon from "../../assets/TrashIcon";
 import styles from "./AllLists.module.scss";
-import { setDBList } from '../../utils/indexeddb.ts';
+import { setDBList } from '../../utils/indexeddb';
 import { createId } from "../../utils/general";
 
 
