@@ -5,7 +5,7 @@ import listStyles from "../List/List.module.scss";
 import TrashIcon from "../../assets/TrashIcon";
 import useResizeTextarea from "../../hooks/useResizeTextarea";
 import { ListsDispatchContext } from "../../providers/ListProvider";
-import { setDBListItem } from "../../utils/indexeddb";
+import { setDBListItem, deleteDBListItem } from "../../utils/indexeddb";
 
 type ListItemProps = {
   shouldAutoFocus: boolean;
@@ -77,6 +77,8 @@ export default function ListItem({ listItem, listId, shouldAutoFocus }: ListItem
             listId: listId,
             itemId: listItem.id,
           });
+
+          deleteDBListItem(listItem.id);
         }} 
         className={`${allListStyles.trashBtn} ${allListStyles["trashBtn--listItem"]}`}
       >

@@ -297,3 +297,33 @@ export async function setDBListItem(listItem: ListItemStore) {
     }
   }
 }
+
+export async function deleteDBListItem(key: number) {
+  console.log('deleteDBListItem running');
+  console.log(key);
+
+  try {
+    const db = await getDatabase();
+
+    const listItemsTransaction = db.transaction(['listItems'], 'readwrite');
+    const listItemsStore = listItemsTransaction.objectStore('listItems');
+
+    try {
+      await listItemsStore.delete(key);
+      console.log("List item deleted");
+    } catch(err) {
+      if (err instanceof Error) {
+        console.error(`Database error deleting list transaction: ${err.message}`);
+      } else {
+        console.error(`Database error getting list items`);
+      }
+    }
+
+  } catch(err) {
+    if (err instanceof Error) {
+      console.error(`Database transaction error deleting list item: ${err.message}`);
+    } else {
+      console.error(`Database transaction error deleting list items`);
+    }
+  }
+}
