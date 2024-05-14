@@ -4,12 +4,14 @@ import useResizeTextarea from "../../hooks/useResizeTextarea";
 import { ListsDispatchContext } from "../../providers/ListProvider";
 import { AllTodoLists } from "../../types";
 import { setDBList } from "../../utils/indexeddb";
+import { createId } from "../../utils/general";
 
 type ListTitleProps = {
-  list: AllTodoLists[0]
+  list: AllTodoLists[0];
+  setNewListItemId: React.Dispatch<React.SetStateAction<number | null>>;
 };
 
-export default function ListTitle({ list }: ListTitleProps) {
+export default function ListTitle({ list, setNewListItemId }: ListTitleProps) {
   const listsDispatch = useContext(ListsDispatchContext);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -23,6 +25,24 @@ export default function ListTitle({ list }: ListTitleProps) {
       ref={textareaRef}
       placeholder="List Title"
       autoFocus={list.listName === ''}
+      onKeyDown={
+        (e) => {
+          console.log('onKeyDown firing');
+          
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            const newItemId = createId();
+
+            listsDispatch({
+              type: "item-added",
+              listId: list.id,
+              itemId: newItemId
+            });
+
+            setNewListItemId(newItemId);
+          }
+        }
+      }
       onChange={(e) => {
         listsDispatch({
           type: "title-changed",
