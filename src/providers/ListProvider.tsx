@@ -10,7 +10,7 @@ type TodosAction =
   | { type: "list-removed"; listId: number; }
   | { type: "item-removed"; listId: number; itemId: number; }
   | { type: "list-added"; listId: number; }
-  | { type: "item-added"; listId: number; itemId: number }
+  | { type: "item-added"; listId: number; itemId: number, index?: number }
   | { type: "item-marked"; listId: number; itemId: number; completed: boolean };
 
 export const ListsContext = createContext<AllTodoLists>([]);

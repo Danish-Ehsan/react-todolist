@@ -6,14 +6,17 @@ import TrashIcon from "../../assets/TrashIcon";
 import useResizeTextarea from "../../hooks/useResizeTextarea";
 import { ListsDispatchContext } from "../../providers/ListProvider";
 import { setDBListItem, deleteDBListItem } from "../../utils/indexeddb";
+import { createId } from "../../utils/general";
 
 type ListItemProps = {
-  shouldAutoFocus: boolean;
   listItem: AllTodoLists[0]["listItems"][0];
   listId: number;
+  index: number;
+  setNewListItemId: React.Dispatch<React.SetStateAction<number | null>>;
+  shouldAutoFocus: boolean;
 };
 
-export default function ListItem({ listItem, listId, shouldAutoFocus }: ListItemProps) {
+export default function ListItem({ listItem, listId, index, setNewListItemId, shouldAutoFocus }: ListItemProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const listsDispatch = useContext(ListsDispatchContext);
 
@@ -52,8 +55,29 @@ export default function ListItem({ listItem, listId, shouldAutoFocus }: ListItem
         className={`${listStyles.listTextarea} ${listStyles.listItem} ${listItem.completed ? listStyles["is-completed"] : ""}`} 
         rows={1} 
         autoFocus={shouldAutoFocus}
+        onKeyDown={
+          (e) => {
+            console.log('onKeyDown firing');
+            
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              const newItemId = createId();
+
+              listsDispatch({
+                type: "item-added",
+                listId: listItem.listId,
+                itemId: newItemId,
+                index: index
+              });
+
+              setNewListItemId(newItemId);
+            }
+          }
+        }
         onChange={
           (e) => {
+            console.log('onKeyDown firing');
+
             listsDispatch({
               type: "item-changed",
               listId: listId,
