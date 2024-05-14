@@ -58,6 +58,7 @@ export default function ListItem({ listItem, listId, index, setNewListItemId, sh
         onKeyDown={
           (e) => {
             console.log('onKeyDown firing');
+            console.log({index});
             
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();

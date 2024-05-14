@@ -115,16 +115,32 @@ function todosListReducer(todoLists: AllTodoLists, action: TodosAction): AllTodo
         if (list.id !== action.listId) {
           return list;
         } else {
-          const newListItems = [
-            ...list.listItems,
-            {
-              itemName: "",
-              id: action.itemId,
-              listId: action.listId,
-              timestamp: Date.now(),
-              completed: false,
-            },
-          ];
+          let newListItems = [];
+
+          if (action.index) {
+            newListItems = [
+              ...list.listItems.slice(0,action.index + 1),
+              {
+                itemName: "",
+                id: action.itemId,
+                listId: action.listId,
+                timestamp: Date.now(),
+                completed: false,
+              },
+              ...list.listItems.slice(action.index + 1)
+            ];
+          } else {
+            newListItems = [
+              ...list.listItems,
+              {
+                itemName: "",
+                id: action.itemId,
+                listId: action.listId,
+                timestamp: Date.now(),
+                completed: false,
+              },
+            ];
+          }
 
           const newList = {
             ...list,
