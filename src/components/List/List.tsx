@@ -18,7 +18,6 @@ export default function List({ listIndex, onSetView }: ListProps) {
   const list = allLists[listIndex];
 
   const listItemElems = list.listItems.map((listItem, index) => {
-    console.log(listItem.id, newListItemId);
     return <ListItem listItem={listItem} listId={list.id} index={index} setNewListItemId={setNewListItemId} shouldAutoFocus={listItem.id === newListItemId} key={listItem.id.toString()} />;
   });
 
