@@ -375,3 +375,52 @@ export async function deleteDBList(key: number) {
     }
   }
 }
+
+export async function resyncDatabase(lists: AllTodoLists) {
+  console.log('resyncDatabse running');
+  console.log(lists);
+
+  const mainLists: ListStore[] = [];
+  const allListItems: ListItemStore[] = [];
+
+  lists.forEach((list) => {
+    allListItems.push(...list.listItems);
+  });
+
+  lists.forEach((list) => {
+    const newListObj: ListStore = {
+      ...list
+    }
+
+    delete newListObj.listItems;
+
+    mainLists.push(newListObj);
+  });
+
+  try {
+    const db = await getDatabase();
+
+    const listsTransaction = db.transaction(['lists', 'listItems'], 'readwrite');
+    const listsStore = listsTransaction.objectStore('lists');
+    const listItemsStore = listsTransaction.objectStore('listItems');
+
+    //Delete all entries on object stores
+    listsStore.clear();
+    listItemsStore.clear();
+
+    mainLists.forEach(async (list) => {
+      await listsStore.put(list);
+    });
+
+    allListItems.forEach(async (listItem) => {
+      await listItemsStore.put(listItem);
+    });
+
+  } catch(err) {
+    if (err instanceof Error) {
+      console.error(`Database transaction error resyncing: ${err.message}`);
+    } else {
+      console.error(`Database transaction error resyncing`);
+    }
+  }
+}
