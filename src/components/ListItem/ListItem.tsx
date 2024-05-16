@@ -1,5 +1,5 @@
 import { useRef, useContext } from "react";
-import { AllTodoLists } from "../../types";
+import { ListItem } from "../../types";
 import allListStyles from "../AllLists/AllLists.module.scss";
 import listStyles from "../List/List.module.scss";
 import TrashIcon from "../../assets/TrashIcon";
@@ -9,7 +9,7 @@ import { setDBListItem, deleteDBListItem } from "../../utils/indexeddb";
 import { createId } from "../../utils/general";
 
 type ListItemProps = {
-  listItem: AllTodoLists[0]["listItems"][0];
+  listItem: ListItem;
   listId: number;
   index: number;
   setNewListItemId: React.Dispatch<React.SetStateAction<number | null>>;

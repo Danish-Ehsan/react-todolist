@@ -2,12 +2,12 @@ import { useRef, useContext } from "react";
 import styles from "../List/List.module.scss";
 import useResizeTextarea from "../../hooks/useResizeTextarea";
 import { ListsDispatchContext } from "../../providers/ListProvider";
-import { AllTodoLists } from "../../types";
+import { List } from "../../types";
 import { setDBList } from "../../utils/indexeddb";
 import { createId } from "../../utils/general";
 
 type ListTitleProps = {
-  list: AllTodoLists[0];
+  list: List;
   setNewListItemId: React.Dispatch<React.SetStateAction<number | null>>;
 };
 
