@@ -17,14 +17,22 @@ export default function List({ listIndex, onSetView }: ListProps) {
   const allLists = useContext(ListsContext);
   const list = allLists[listIndex];
 
-  const listItemElems = list.listItems.map((listItem, index) => {
-    return <ListItem listItem={listItem} listId={list.id} index={index} setNewListItemId={setNewListItemId} shouldAutoFocus={listItem.id === newListItemId} key={listItem.id.toString()} />;
+  const incompleteListItemElems: JSX.Element[] = [];
+  const completedListItemElems: JSX.Element[] = [];
+
+  list.listItems.forEach((listItem, index) => {
+    if (listItem.completed) {
+      completedListItemElems.push(<ListItem listItem={listItem} listId={list.id} index={index} setNewListItemId={setNewListItemId} shouldAutoFocus={listItem.id === newListItemId} key={listItem.id.toString()} />);
+    } else {
+      incompleteListItemElems.push(<ListItem listItem={listItem} listId={list.id} index={index} setNewListItemId={setNewListItemId} shouldAutoFocus={listItem.id === newListItemId} key={listItem.id.toString()} />);
+    }
   });
 
   return (
     <>
       <ListTitle list={list} setNewListItemId={setNewListItemId} />
-      {listItemElems}
+      {incompleteListItemElems}
+      {completedListItemElems}
       <button className="button" 
         onClick={
           () => {
