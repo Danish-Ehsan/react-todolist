@@ -1,37 +1,29 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
 import { createId } from './general';
-import { AllTodoLists } from '../types';
+import { AllTodoLists, List, ListItem } from '../types';
 
 interface ListDatabase extends DBSchema {
   lists: {
-    value: {
-      id: number;
-      listName?: string;
-      timestamp?: number;
-    };
+    value: ListStore;
     key: number;
   };
   listItems: {
-    value: {
-      id: number;
-      listId?: number;
-      itemName?: string;
-      timestamp?: number;
-      completed?: boolean;
-    };
+    value: ListItem
     key: number;
     indexes: { listId: number };
   };
 }
 
-type ListStore = {
+type ListStore = Omit<List, "listItems">;
+
+type SetList = {
   id: number;
   listName?: string;
   timestamp?: number;
-  listItems?: ListItemStore[];
+  listItems?: ListItem[];
 }
 
-type ListItemStore = {
+type SetListItem = {
   id: number;
   listId?: number;
   itemName?: string;
@@ -85,7 +77,8 @@ export async function getDBLists(abortObj:AbortObj): Promise<AllTodoLists | unde
 
   console.log('getLists success 1 event');
 
-  let lists: ListStore[] = [];
+  let mainLists: ListStore[] = [];
+  const newLists: AllTodoLists = [];
 
   try {
     const db = await getDatabase(abortObj);
@@ -105,7 +98,7 @@ export async function getDBLists(abortObj:AbortObj): Promise<AllTodoLists | unde
     const listItemsIndex = listItemsStore.index('listId');
 
     try {
-      lists = await listsStore.getAll();
+      mainLists = await listsStore.getAll();
 
       console.log({listsStore});
 
@@ -118,23 +111,23 @@ export async function getDBLists(abortObj:AbortObj): Promise<AllTodoLists | unde
       console.log(abortObj);
       console.log('getLists cursor open success');
 
-      lists.forEach(async (list) => {
-
-        try {
+      //Get list items for all lists in parallell and add them to newLists
+      await Promise.all(
+        mainLists.map(async (list) => {
           const listItems = await listItemsIndex.getAll(list.id);
-          
-          list.listItems = listItems.length ? listItems : [];
 
-          console.log('getting list item');
-          console.log(list.id);
-          console.log(listItems);
-
-        } catch(err) {
-          if (err instanceof Error) {
-            console.error(`Database error getting list items: ${err.message}`);
-          } else {
-            console.error(`Database error getting list items`);
+          const newList: List = {
+            ...list,
+            listItems: listItems.length ? listItems : []
           }
+
+          newLists.push(newList);
+        })
+      ).catch((err) => {
+        if (err instanceof Error) {
+          console.error(`Database error getting listStore: ${err.message }`);
+        } else {
+          console.error(`Database error getting list items`);
         }
       });
 
@@ -143,7 +136,7 @@ export async function getDBLists(abortObj:AbortObj): Promise<AllTodoLists | unde
         return;
       }
 
-      console.log(lists);
+      console.log(newLists);
 
     } catch(err) {
       if (err instanceof Error) {
@@ -161,7 +154,8 @@ export async function getDBLists(abortObj:AbortObj): Promise<AllTodoLists | unde
     }
   }
 
-  return lists as AllTodoLists;
+  console.log(newLists);
+  return newLists;
 }
 
 function createDatabase(db: IDBPDatabase<ListDatabase>) {
@@ -235,7 +229,7 @@ async function addMockData(db: IDBPDatabase<ListDatabase>) {
     .catch((err) => console.error(`Database error adding mock data: ${err.message}`) );
 }
 
-export async function setDBList(list: ListStore) {
+export async function setDBList(list: SetList) {
   console.log('addList running');
   console.log(list);
 
@@ -248,15 +242,28 @@ export async function setDBList(list: ListStore) {
     const listsStore = listsTransaction.objectStore('lists');
 
     try {
-      await listsStore.put(list);
-      console.log('list updated');
+      const oldList = await listsStore.get(list.id);
+      const newList = {
+        ...oldList,
+        ...list
+      } as List
+
+      try {
+        await listsStore.put(newList);
+        console.log('list updated');
+      } catch(err) {
+        if (err instanceof Error) {
+          console.error(`Database error adding list: ${err.message}`);
+        } else {
+          console.error(`Database error getting list items`);
+        }
+      }
     } catch(err) {
       if (err instanceof Error) {
-        console.error(`Database error adding list: ${err.message}`);
+        console.error(`Database error getting listItem: ${err.message}`);
       } else {
-        console.error(`Database error getting list items`);
+        console.error(`Database error getting listItem`);
       }
-      
     }
 
   } catch(err) {
@@ -269,7 +276,7 @@ export async function setDBList(list: ListStore) {
   
 }
 
-export async function setDBListItem(listItem: ListItemStore) {
+export async function setDBListItem(listItem: SetListItem) {
   console.log('setListItem running');
   console.log(listItem);
 
@@ -279,8 +286,14 @@ export async function setDBListItem(listItem: ListItemStore) {
     const listItemsTransaction = db.transaction(['listItems'], 'readwrite');
     const listItemsStore = listItemsTransaction.objectStore('listItems');
 
+    const oldListItem = await listItemsStore.get(listItem.id);
+    const newListItem = {
+      ...oldListItem,
+      ...listItem
+    } as ListItem
+
     try {
-      await listItemsStore.put(listItem);
+      await listItemsStore.put(newListItem);
       console.log('list item updated');
     } catch(err) {
       if (err instanceof Error) {
@@ -381,7 +394,7 @@ export async function resyncDatabase(lists: AllTodoLists) {
   console.log(lists);
 
   const mainLists: ListStore[] = [];
-  const allListItems: ListItemStore[] = [];
+  const allListItems: ListItem[] = [];
 
   lists.forEach((list) => {
     allListItems.push(...list.listItems);
@@ -389,10 +402,10 @@ export async function resyncDatabase(lists: AllTodoLists) {
 
   lists.forEach((list) => {
     const newListObj: ListStore = {
-      ...list
+      id: list.id,
+      listName: list.listName,
+      timestamp: list.timestamp
     }
-
-    delete newListObj.listItems;
 
     mainLists.push(newListObj);
   });
