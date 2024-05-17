@@ -4,7 +4,7 @@ import ListTitle from "../ListTitle/ListTitle";
 import { ViewState } from "../../types";
 import { ListsContext, ListsDispatchContext } from "../../providers/ListProvider";
 import { createId } from "../../utils/general";
-import { setDBListItem, deleteDBList } from "../../utils/indexeddb";
+import { createDBListItem, deleteDBList } from "../../utils/indexeddb";
 
 type ListProps = {
   listIndex: number;
@@ -48,7 +48,7 @@ export default function List({ listIndex, onSetView }: ListProps) {
 
             setNewListItemId(newId);
 
-            setDBListItem({
+            createDBListItem({
               id: newId,
               listId: list.id,
               itemName: '',

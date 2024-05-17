@@ -229,7 +229,39 @@ async function addMockData(db: IDBPDatabase<ListDatabase>) {
     .catch((err) => console.error(`Database error adding mock data: ${err.message}`) );
 }
 
-export async function setDBList(list: SetList) {
+export async function createDBList(list: ListStore) {
+  console.log('createDBList running');
+  console.log(list);
+
+  try {
+    const db = await getDatabase();
+
+    console.log('createList db success');
+
+    const listsTransaction = db.transaction(['lists'], 'readwrite');
+    const listsStore = listsTransaction.objectStore('lists');
+
+    try {
+      await listsStore.add(list);
+      console.log('list updated');
+    } catch(err) {
+      if (err instanceof Error) {
+        console.error(`Database error creating list: ${err.message}`);
+      } else {
+        console.error(`Database error creating list`);
+      }
+    }
+
+  } catch(err) {
+    if (err instanceof Error) {
+      console.error(`Database error creating list transaction: ${err.message}`);
+    } else {
+      console.error(`Database error getting list items`);
+    }
+  }
+}
+
+export async function updateDBList(list: SetList) {
   console.log('addList running');
   console.log(list);
 
@@ -243,6 +275,11 @@ export async function setDBList(list: SetList) {
 
     try {
       const oldList = await listsStore.get(list.id);
+
+      if (!oldList) {
+        throw new Error('List doesn\'t exist. Use createDBList function to create a new List.');
+      }
+
       const newList = {
         ...oldList,
         ...list
@@ -253,16 +290,16 @@ export async function setDBList(list: SetList) {
         console.log('list updated');
       } catch(err) {
         if (err instanceof Error) {
-          console.error(`Database error adding list: ${err.message}`);
+          console.error(`Database error updating list: ${err.message}`);
         } else {
-          console.error(`Database error getting list items`);
+          console.error(`Database error updating list`);
         }
       }
     } catch(err) {
       if (err instanceof Error) {
-        console.error(`Database error getting listItem: ${err.message}`);
+        console.error(`Database error getting list: ${err.message}`);
       } else {
-        console.error(`Database error getting listItem`);
+        console.error(`Database error getting list`);
       }
     }
 
@@ -273,10 +310,38 @@ export async function setDBList(list: SetList) {
       console.error(`Database error getting list items`);
     }
   }
-  
 }
 
-export async function setDBListItem(listItem: SetListItem) {
+export async function createDBListItem(listItem: ListItem) {
+  console.log('setListItem running');
+  console.log(listItem);
+
+  try {
+    const db = await getDatabase();
+
+    const listItemsTransaction = db.transaction(['listItems'], 'readwrite');
+    const listItemsStore = listItemsTransaction.objectStore('listItems');
+
+    try {
+      await listItemsStore.add(listItem);
+      console.log('list item created');
+    } catch(err) {
+      if (err instanceof Error) {
+        console.error(`Database error creating list item: ${err.message}`);
+      } else {
+        console.error(`Database error creating list item`);
+      }
+    } 
+  } catch(err) {
+    if (err instanceof Error) {
+      console.error(`Database error creating list items transaction: ${err.message}`);
+    } else {
+      console.error(`Database error getting list items`);
+    }
+  }
+}
+
+export async function updateDBListItem(listItem: SetListItem) {
   console.log('setListItem running');
   console.log(listItem);
 
@@ -287,6 +352,11 @@ export async function setDBListItem(listItem: SetListItem) {
     const listItemsStore = listItemsTransaction.objectStore('listItems');
 
     const oldListItem = await listItemsStore.get(listItem.id);
+
+    if (!oldListItem) {
+      throw new Error('List item doesn\'t exist. Use createDBListItem function to create a new list item.')
+    }
+
     const newListItem = {
       ...oldListItem,
       ...listItem
@@ -299,9 +369,9 @@ export async function setDBListItem(listItem: SetListItem) {
       if (err instanceof Error) {
         console.error(`Database error adding list item: ${err.message}`);
       } else {
-        console.error(`Database error getting list items`);
+        console.error(`Database error getting list item`);
       }
-    } 
+    }
   } catch(err) {
     if (err instanceof Error) {
       console.error(`Database error creating list items transaction: ${err.message}`);

@@ -3,7 +3,7 @@ import { ListsContext, ListsDispatchContext } from "../../providers/ListProvider
 import { ViewState } from "../../types";
 import TrashIcon from "../../assets/TrashIcon";
 import styles from "./AllLists.module.scss";
-import { setDBList, deleteDBList } from '../../utils/indexeddb';
+import { createDBList, deleteDBList } from '../../utils/indexeddb';
 import { createId } from "../../utils/general";
 
 
@@ -59,7 +59,7 @@ export default function AllLists({ onSetView, onSetCurrentListId }: AllListsProp
             timestamp: newTimestamp
           });
 
-          setDBList({ id: newListId, listName: '', timestamp: newTimestamp });
+          createDBList({ id: newListId, listName: '', timestamp: newTimestamp });
 
           onSetCurrentListId(newListId);
           onSetView('singleList');

@@ -1,15 +1,15 @@
 import { useRef, useContext } from "react";
-import { ListItem } from "../../types";
+import { ListItem as ListItemType } from "../../types";
 import allListStyles from "../AllLists/AllLists.module.scss";
 import listStyles from "../List/List.module.scss";
 import TrashIcon from "../../assets/TrashIcon";
 import useResizeTextarea from "../../hooks/useResizeTextarea";
 import { ListsDispatchContext } from "../../providers/ListProvider";
-import { setDBListItem, deleteDBListItem } from "../../utils/indexeddb";
+import { createDBListItem, updateDBListItem, deleteDBListItem } from "../../utils/indexeddb";
 import { createId } from "../../utils/general";
 
 type ListItemProps = {
-  listItem: ListItem;
+  listItem: ListItemType;
   listId: number;
   index: number;
   setNewListItemId: React.Dispatch<React.SetStateAction<number | null>>;
@@ -38,10 +38,8 @@ export default function ListItem({ listItem, listId, index, setNewListItemId, sh
                 completed: !listItem.completed,
               });
 
-              setDBListItem({
+              updateDBListItem({
                 id: listItem.id,
-                listId: listId,
-                itemName: listItem.itemName,
                 completed: !listItem.completed
               });
             }
@@ -74,7 +72,7 @@ export default function ListItem({ listItem, listId, index, setNewListItemId, sh
                 index: index
               });
 
-              setDBListItem({
+              createDBListItem({
                 id: newItemId,
                 listId: listId,
                 itemName: '',
@@ -97,14 +95,12 @@ export default function ListItem({ listItem, listId, index, setNewListItemId, sh
               itemId: listItem.id,
             });
 
-            setDBListItem({
+            updateDBListItem({
               id: listItem.id,
-              listId: listId,
               itemName: e.target.value,
-              completed: listItem.completed
             });
           }
-        } 
+        }
       />
       <button 
         onClick={() => {
