@@ -4,7 +4,7 @@ import ListTitle from "../ListTitle/ListTitle";
 import { ViewState } from "../../types";
 import { ListsContext, ListsDispatchContext } from "../../providers/ListProvider";
 import { createId } from "../../utils/general";
-import { setDBListItem } from "../../utils/indexeddb";
+import { setDBListItem, deleteDBList } from "../../utils/indexeddb";
 
 type ListProps = {
   listIndex: number;
@@ -64,11 +64,13 @@ export default function List({ listIndex, onSetView }: ListProps) {
         onClick={() => {
           onSetView("allLists");
 
-          if (list.listName === "Untitled" && list.listItems.length < 1) {
+          if (list.listName === "" && list.listItems.length < 1) {
             listsDispatch({
               type: "list-removed",
               listId: list.id,
             });
+
+            deleteDBList(list.id);
           }
         }}
       >
