@@ -51,13 +51,15 @@ export default function AllLists({ onSetView, onSetCurrentListId }: AllListsProp
         className="button"
         onClick={() => {
           const newListId = createId();
+          const newTimestamp = Date.now();
 
           listsDispatch({
             type: "list-added",
-            listId: newListId
+            listId: newListId,
+            timestamp: newTimestamp
           });
 
-          setDBList({ id: newListId, listName: '', timestamp: Date.now() });
+          setDBList({ id: newListId, listName: '', timestamp: newTimestamp });
 
           onSetCurrentListId(newListId);
           onSetView('singleList');

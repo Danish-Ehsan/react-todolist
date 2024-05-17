@@ -26,17 +26,21 @@ export default function ListTitle({ list, setNewListItemId }: ListTitleProps) {
       placeholder="List Title"
       autoFocus={list.listName === ''}
       onKeyDown={
+        //Create new list if Enter is pressed without the shift key
         (e) => {
           console.log('onKeyDown firing');
           
           if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             const newItemId = createId();
+            const newTimestamp = Date.now();
 
             listsDispatch({
               type: "item-added",
               listId: list.id,
-              itemId: newItemId
+              itemId: newItemId,
+              timestamp: newTimestamp
+            });
             });
 
             setNewListItemId(newItemId);

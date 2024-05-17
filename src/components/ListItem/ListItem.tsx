@@ -56,6 +56,7 @@ export default function ListItem({ listItem, listId, index, setNewListItemId, sh
         rows={1} 
         autoFocus={shouldAutoFocus}
         onKeyDown={
+          //Create new list if Enter is pressed without the shift key
           (e) => {
             console.log('onKeyDown firing');
             console.log({index});
@@ -63,11 +64,13 @@ export default function ListItem({ listItem, listId, index, setNewListItemId, sh
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
               const newItemId = createId();
+              const newTimestamp = Date.now();
 
               listsDispatch({
                 type: "item-added",
-                listId: listItem.listId,
+                listId: listId,
                 itemId: newItemId,
+                timestamp: newTimestamp,
                 index: index
               });
 

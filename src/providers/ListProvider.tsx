@@ -9,8 +9,8 @@ type TodosAction =
   | { type: "item-changed"; listId: number; newItemName: string; itemId: number; }
   | { type: "list-removed"; listId: number; }
   | { type: "item-removed"; listId: number; itemId: number; }
-  | { type: "list-added"; listId: number; }
-  | { type: "item-added"; listId: number; itemId: number, index?: number }
+  | { type: "list-added"; listId: number; timestamp: number; }
+  | { type: "item-added"; listId: number; itemId: number; timestamp: number; index?: number }
   | { type: "item-marked"; listId: number; itemId: number; completed: boolean };
 
 export const ListsContext = createContext<AllTodoLists>([]);
@@ -101,7 +101,7 @@ function todosListReducer(todoLists: AllTodoLists, action: TodosAction): AllTodo
           listName: "",
           id: action.listId,
           listItems: [],
-          timestamp: Date.now()
+          timestamp: action.timestamp
         },
       ];
 
@@ -124,7 +124,7 @@ function todosListReducer(todoLists: AllTodoLists, action: TodosAction): AllTodo
                 itemName: "",
                 id: action.itemId,
                 listId: action.listId,
-                timestamp: Date.now(),
+                timestamp: action.timestamp,
                 completed: false,
               },
               ...list.listItems.slice(action.index + 1)
@@ -136,7 +136,7 @@ function todosListReducer(todoLists: AllTodoLists, action: TodosAction): AllTodo
                 itemName: "",
                 id: action.itemId,
                 listId: action.listId,
-                timestamp: Date.now(),
+                timestamp: action.timestamp,
                 completed: false,
               },
             ];

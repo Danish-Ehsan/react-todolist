@@ -37,11 +37,13 @@ export default function List({ listIndex, onSetView }: ListProps) {
         onClick={
           () => {
             const newId = createId();
+            const newTimestamp = Date.now();
 
             listsDispatch({
               type: "item-added",
               listId: list.id,
-              itemId: newId
+              itemId: newId,
+              timestamp: newTimestamp
             });
 
             setNewListItemId(newId);
@@ -51,7 +53,7 @@ export default function List({ listIndex, onSetView }: ListProps) {
               listId: list.id,
               itemName: '',
               completed: false,
-              timestamp: Date.now()
+              timestamp: newTimestamp
             });
           }
         }>
