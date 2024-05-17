@@ -74,6 +74,14 @@ export default function ListItem({ listItem, listId, index, setNewListItemId, sh
                 index: index
               });
 
+              setDBListItem({
+                id: newItemId,
+                listId: listId,
+                itemName: '',
+                completed: false,
+                timestamp: newTimestamp
+              });
+
               setNewListItemId(newItemId);
             }
           }

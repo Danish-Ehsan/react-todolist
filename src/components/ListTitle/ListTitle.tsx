@@ -3,7 +3,7 @@ import styles from "../List/List.module.scss";
 import useResizeTextarea from "../../hooks/useResizeTextarea";
 import { ListsDispatchContext } from "../../providers/ListProvider";
 import { List } from "../../types";
-import { setDBList } from "../../utils/indexeddb";
+import { setDBList, setDBListItem } from "../../utils/indexeddb";
 import { createId } from "../../utils/general";
 
 type ListTitleProps = {
@@ -41,6 +41,13 @@ export default function ListTitle({ list, setNewListItemId }: ListTitleProps) {
               itemId: newItemId,
               timestamp: newTimestamp
             });
+
+            setDBListItem({
+              id: list.id,
+              listId: list.id,
+              itemName: '',
+              completed: false,
+              timestamp: newTimestamp
             });
 
             setNewListItemId(newItemId);
