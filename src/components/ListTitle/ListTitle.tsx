@@ -14,6 +14,7 @@ type ListTitleProps = {
 export default function ListTitle({ list, setNewListItemId }: ListTitleProps) {
   const listsDispatch = useContext(ListsDispatchContext);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const debounceTimeoutID = useRef<number | null>(null);
 
   useResizeTextarea(textareaRef, list.listName);
 
@@ -61,11 +62,19 @@ export default function ListTitle({ list, setNewListItemId }: ListTitleProps) {
           newTitle: e.target.value,
         });
 
-        updateDBList({
-          id: list.id,
-          listName: e.target.value,
-          timestamp: Date.now()
-        });
+        //Debounce database sync on user input
+        if (debounceTimeoutID.current) {
+          clearInterval(debounceTimeoutID.current);
+        }
+
+        debounceTimeoutID.current = setTimeout(() => {
+          console.log('list onChange debounce func firing');
+          updateDBList({
+            id: list.id,
+            listName: e.target.value,
+            timestamp: Date.now()
+          });
+        }, 500);
       }}
     />
   );

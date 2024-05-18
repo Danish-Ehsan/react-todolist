@@ -18,6 +18,7 @@ type ListItemProps = {
 
 export default function ListItem({ listItem, listId, index, setNewListItemId, shouldAutoFocus }: ListItemProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const debounceTimeoutID = useRef<number | null>(null);
   const listsDispatch = useContext(ListsDispatchContext);
 
   useResizeTextarea(textareaRef, listItem.itemName);
@@ -86,7 +87,7 @@ export default function ListItem({ listItem, listId, index, setNewListItemId, sh
         }
         onChange={
           (e) => {
-            console.log('onKeyDown firing');
+            console.log('onChange firing');
 
             listsDispatch({
               type: "item-changed",
@@ -95,10 +96,18 @@ export default function ListItem({ listItem, listId, index, setNewListItemId, sh
               itemId: listItem.id,
             });
 
-            updateDBListItem({
-              id: listItem.id,
-              itemName: e.target.value,
-            });
+            //Debounce database sync on user input
+            if (debounceTimeoutID.current) {
+              clearInterval(debounceTimeoutID.current);
+            }
+
+            debounceTimeoutID.current = setTimeout(() => {
+              console.log('listItem onChange debounce func firing');
+              updateDBListItem({
+                id: listItem.id,
+                itemName: e.target.value,
+              });
+            }, 500);
           }
         }
       />
