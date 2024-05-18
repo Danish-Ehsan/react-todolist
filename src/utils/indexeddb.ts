@@ -104,6 +104,7 @@ export async function getDBLists(abortObj:AbortObj): Promise<AllTodoLists | unde
 
       if (abortObj?.abort) {
         console.log('Aborting success event');
+        listsTransaction.abort();
         db.close();
         return;
       }
@@ -133,6 +134,8 @@ export async function getDBLists(abortObj:AbortObj): Promise<AllTodoLists | unde
 
       if (abortObj?.abort) {
         console.log('Aborting success event');
+        listsTransaction.abort();
+        db.close();
         return;
       }
 
