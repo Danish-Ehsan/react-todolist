@@ -1,7 +1,7 @@
-import { useRef, useContext } from "react";
+import { useRef } from "react";
 import styles from "../List/List.module.scss";
 import useResizeTextarea from "../../hooks/useResizeTextarea";
-import { ListsDispatchContext } from "../../providers/ListProvider";
+import useListsContext from "../../hooks/useListsContext";
 import { List } from "../../types";
 import { updateDBList, createDBListItem } from "../../utils/indexeddb";
 import { createId } from "../../utils/general";
@@ -12,7 +12,7 @@ type ListTitleProps = {
 };
 
 export default function ListTitle({ list, setNewListItemId }: ListTitleProps) {
-  const listsDispatch = useContext(ListsDispatchContext);
+  const [, listsDispatch] = useListsContext();
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const debounceTimeoutID = useRef<number | null>(null);
 

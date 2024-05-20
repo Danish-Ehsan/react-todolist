@@ -1,16 +1,15 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useEffect } from "react";
 import styles from "./App.module.scss";
 import AllLists from "./components/AllLists/AllLists";
 import List from "./components/List/List";
 import { ViewState } from "./types";
-import { ListsContext, ListsDispatchContext } from "./providers/ListProvider.tsx";
+import useListsContext from "./hooks/useListsContext";
 import { getDBLists } from './utils/indexeddb';
 
 function App() {
   const [view, setView] = useState<ViewState>("allLists");
   const [currentListId, setCurrentListId] = useState<null | number>(null);
-  const todosLists = useContext(ListsContext);
-  const listsDispatch = useContext(ListsDispatchContext);
+  const [todosLists, listsDispatch] = useListsContext();
 
   const currentListIndex = function () {
     if (currentListId === null) {

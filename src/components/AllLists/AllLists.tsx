@@ -1,5 +1,4 @@
-import { useContext } from "react";
-import { ListsContext, ListsDispatchContext } from "../../providers/ListProvider";
+import useListsContext from "../../hooks/useListsContext";
 import { ViewState } from "../../types";
 import TrashIcon from "../../assets/TrashIcon";
 import styles from "./AllLists.module.scss";
@@ -13,8 +12,7 @@ type AllListsProps = {
 };
 
 export default function AllLists({ onSetView, onSetCurrentListId }: AllListsProps) {
-  const todosLists = useContext(ListsContext);
-  const listsDispatch = useContext(ListsDispatchContext);
+  const [todosLists, listsDispatch] = useListsContext();
 
   const todosElements = todosLists.map((todosList) => {
     return (

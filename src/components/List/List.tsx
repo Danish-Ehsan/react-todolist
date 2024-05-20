@@ -1,8 +1,8 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import ListItem from "../ListItem/ListItem";
 import ListTitle from "../ListTitle/ListTitle";
 import { ViewState } from "../../types";
-import { ListsContext, ListsDispatchContext } from "../../providers/ListProvider";
+import useListsContext from "../../hooks/useListsContext";
 import { createId } from "../../utils/general";
 import { createDBListItem, deleteDBList } from "../../utils/indexeddb";
 
@@ -13,8 +13,7 @@ type ListProps = {
 
 export default function List({ listIndex, onSetView }: ListProps) {
   const [newListItemId, setNewListItemId] = useState<number | null>(null);
-  const listsDispatch = useContext(ListsDispatchContext);
-  const allLists = useContext(ListsContext);
+  const [allLists, listsDispatch] = useListsContext();
   const list = allLists[listIndex];
 
   const incompleteListItemElems: JSX.Element[] = [];

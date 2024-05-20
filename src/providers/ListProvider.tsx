@@ -13,17 +13,14 @@ type TodosAction =
   | { type: "item-added"; listId: number; itemId: number; timestamp: number; index?: number }
   | { type: "item-marked"; listId: number; itemId: number; completed: boolean };
 
-export const ListsContext = createContext<AllTodoLists>([]);
-export const ListsDispatchContext = createContext<React.Dispatch<TodosAction>>(null!);
+export const ListsContext = createContext<[AllTodoLists, React.Dispatch<TodosAction>] | null>(null);
 
 export function ListsProvider({ children }: ListsProviderProps) {
   const [todosList, dispatch] = useReducer(todosListReducer, []);
 
   return (
-    <ListsContext.Provider value={todosList}>
-      <ListsDispatchContext.Provider value={dispatch}>
-        {children}
-      </ListsDispatchContext.Provider>
+    <ListsContext.Provider value={[todosList, dispatch]}>
+      {children}
     </ListsContext.Provider>
   );
 }

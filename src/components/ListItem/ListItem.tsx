@@ -1,10 +1,10 @@
-import { useRef, useContext } from "react";
+import { useRef } from "react";
 import { ListItem as ListItemType } from "../../types";
 import allListStyles from "../AllLists/AllLists.module.scss";
 import listStyles from "../List/List.module.scss";
 import TrashIcon from "../../assets/TrashIcon";
 import useResizeTextarea from "../../hooks/useResizeTextarea";
-import { ListsDispatchContext } from "../../providers/ListProvider";
+import useListsContext from "../../hooks/useListsContext";
 import { createDBListItem, updateDBListItem, deleteDBListItem } from "../../utils/indexeddb";
 import { createId } from "../../utils/general";
 
@@ -19,7 +19,7 @@ type ListItemProps = {
 export default function ListItem({ listItem, listId, index, setNewListItemId, shouldAutoFocus }: ListItemProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const debounceTimeoutID = useRef<number | null>(null);
-  const listsDispatch = useContext(ListsDispatchContext);
+  const [, listsDispatch] = useListsContext();
 
   useResizeTextarea(textareaRef, listItem.itemName);
 
