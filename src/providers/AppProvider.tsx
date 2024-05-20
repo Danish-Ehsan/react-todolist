@@ -1,4 +1,4 @@
-import { ListsProvider } from "./ListProvider";
+import { ListsProvider } from "./ListsProvider";
 
 type AppProviderProps = { children: React.ReactNode }
 

@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ListsContext } from "../providers/ListProvider";
+import { ListsContext } from "../providers/ListsProvider";
 
 export default function useListsContext() {
   const listsContext = useContext(ListsContext);
