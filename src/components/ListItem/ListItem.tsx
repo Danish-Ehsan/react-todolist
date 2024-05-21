@@ -7,6 +7,7 @@ import useResizeTextarea from "../../hooks/useResizeTextarea";
 import useListsContext from "../../hooks/useListsContext";
 import { createDBListItem, updateDBListItem, deleteDBListItem } from "../../utils/indexeddb";
 import { createId } from "../../utils/general";
+import useDBSyncState from "../../hooks/useDBSyncState";
 
 type ListItemProps = {
   listItem: ListItemType;
@@ -20,6 +21,7 @@ export default function ListItem({ listItem, listId, index, setNewListItemId, sh
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const debounceTimeoutID = useRef<number | null>(null);
   const [, listsDispatch] = useListsContext();
+  const [, setDBSyncState] = useDBSyncState();
 
   useResizeTextarea(textareaRef, listItem.itemName);
 
@@ -32,6 +34,8 @@ export default function ListItem({ listItem, listId, index, setNewListItemId, sh
           checked={listItem.completed} 
           onChange={
             () => {
+              setDBSyncState(false);
+
               listsDispatch({
                 type: "item-marked",
                 listId: listId,
@@ -42,7 +46,8 @@ export default function ListItem({ listItem, listId, index, setNewListItemId, sh
               updateDBListItem({
                 id: listItem.id,
                 completed: !listItem.completed
-              });
+              })
+                .then(() => setDBSyncState(true));
             }
           } 
         />
@@ -55,7 +60,7 @@ export default function ListItem({ listItem, listId, index, setNewListItemId, sh
         rows={1} 
         autoFocus={shouldAutoFocus}
         onKeyDown={
-          //Create new list if Enter is pressed without the shift key
+          //Create new list item if Enter is pressed without the shift key
           (e) => {
             console.log('onKeyDown firing');
             console.log({index});
@@ -64,6 +69,7 @@ export default function ListItem({ listItem, listId, index, setNewListItemId, sh
               e.preventDefault();
               const newItemId = createId();
               const newTimestamp = Date.now();
+              setDBSyncState(false);
 
               listsDispatch({
                 type: "item-added",
@@ -79,7 +85,8 @@ export default function ListItem({ listItem, listId, index, setNewListItemId, sh
                 itemName: '',
                 completed: false,
                 timestamp: newTimestamp
-              });
+              })
+                .then(() => setDBSyncState(true));
 
               setNewListItemId(newItemId);
             }
@@ -88,6 +95,7 @@ export default function ListItem({ listItem, listId, index, setNewListItemId, sh
         onChange={
           (e) => {
             console.log('onChange firing');
+            setDBSyncState(false);
 
             listsDispatch({
               type: "item-changed",
@@ -106,7 +114,8 @@ export default function ListItem({ listItem, listId, index, setNewListItemId, sh
               updateDBListItem({
                 id: listItem.id,
                 itemName: e.target.value,
-              });
+              })
+                .then(() => setDBSyncState(true));
             }, 500);
           }
         }

@@ -5,11 +5,13 @@ import List from "./components/List/List";
 import { ViewState } from "./types";
 import useListsContext from "./hooks/useListsContext";
 import { getDBLists } from './utils/indexeddb';
+import useDBSyncState from "./hooks/useDBSyncState";
 
 function App() {
   const [view, setView] = useState<ViewState>("allLists");
   const [currentListId, setCurrentListId] = useState<null | number>(null);
   const [todosLists, listsDispatch] = useListsContext();
+  const [, setDBSyncState] = useDBSyncState();
 
   const currentListIndex = function () {
     if (currentListId === null) {
@@ -35,6 +37,8 @@ function App() {
           lists
         });
       }
+
+      setDBSyncState(true);
     })
 
     //return function has closure over abortObj

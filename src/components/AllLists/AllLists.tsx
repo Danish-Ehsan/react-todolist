@@ -4,6 +4,7 @@ import TrashIcon from "../../assets/TrashIcon";
 import styles from "./AllLists.module.scss";
 import { createDBList, deleteDBList } from '../../utils/indexeddb';
 import { createId } from "../../utils/general";
+import useDBSyncState from "../../hooks/useDBSyncState";
 
 
 type AllListsProps = {
@@ -13,6 +14,7 @@ type AllListsProps = {
 
 export default function AllLists({ onSetView, onSetCurrentListId }: AllListsProps) {
   const [todosLists, listsDispatch] = useListsContext();
+  const [, setDBSyncState] = useDBSyncState();
 
   const todosElements = todosLists.map((todosList) => {
     return (
@@ -27,12 +29,15 @@ export default function AllLists({ onSetView, onSetCurrentListId }: AllListsProp
           {todosList.listName ? todosList.listName : <em>Untitled</em>}
         </button>
         <button onClick={() => {
+          setDBSyncState(false);
+
           listsDispatch({
             type: "list-removed",
             listId: todosList.id,
           });
 
-          deleteDBList(todosList.id);
+          deleteDBList(todosList.id)
+            .then(() => setDBSyncState(true));
         }} 
           className={styles.trashBtn}>
           <TrashIcon className={styles.trashIcon} />
@@ -50,6 +55,7 @@ export default function AllLists({ onSetView, onSetCurrentListId }: AllListsProp
         onClick={() => {
           const newListId = createId();
           const newTimestamp = Date.now();
+          setDBSyncState(false);
 
           listsDispatch({
             type: "list-added",
@@ -57,7 +63,8 @@ export default function AllLists({ onSetView, onSetCurrentListId }: AllListsProp
             timestamp: newTimestamp
           });
 
-          createDBList({ id: newListId, listName: '', timestamp: newTimestamp });
+          createDBList({ id: newListId, listName: '', timestamp: newTimestamp })
+            .then(() => { setDBSyncState(true) });
 
           onSetCurrentListId(newListId);
           onSetView('singleList');

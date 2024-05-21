@@ -5,6 +5,7 @@ import { ViewState } from "../../types";
 import useListsContext from "../../hooks/useListsContext";
 import { createId } from "../../utils/general";
 import { createDBListItem, deleteDBList } from "../../utils/indexeddb";
+import useDBSyncState from "../../hooks/useDBSyncState";
 
 type ListProps = {
   listIndex: number;
@@ -13,6 +14,7 @@ type ListProps = {
 
 export default function List({ listIndex, onSetView }: ListProps) {
   const [newListItemId, setNewListItemId] = useState<number | null>(null);
+  const [, setDBSyncState] = useDBSyncState();
   const [allLists, listsDispatch] = useListsContext();
   const list = allLists[listIndex];
 
@@ -37,6 +39,7 @@ export default function List({ listIndex, onSetView }: ListProps) {
           () => {
             const newId = createId();
             const newTimestamp = Date.now();
+            setDBSyncState(false);
 
             listsDispatch({
               type: "item-added",
@@ -53,7 +56,8 @@ export default function List({ listIndex, onSetView }: ListProps) {
               itemName: '',
               completed: false,
               timestamp: newTimestamp
-            });
+            })
+              .then(() => setDBSyncState(true));
           }
         }>
         + Add Item
@@ -64,12 +68,15 @@ export default function List({ listIndex, onSetView }: ListProps) {
           onSetView("allLists");
 
           if (list.listName === "" && list.listItems.length < 1) {
+            setDBSyncState(false);
+
             listsDispatch({
               type: "list-removed",
               listId: list.id,
             });
 
-            deleteDBList(list.id);
+            deleteDBList(list.id)
+              .then(() => setDBSyncState(true));
           }
         }}
       >

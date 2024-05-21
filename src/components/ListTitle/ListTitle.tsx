@@ -5,6 +5,7 @@ import useListsContext from "../../hooks/useListsContext";
 import { List } from "../../types";
 import { updateDBList, createDBListItem } from "../../utils/indexeddb";
 import { createId } from "../../utils/general";
+import useDBSyncState from "../../hooks/useDBSyncState";
 
 type ListTitleProps = {
   list: List;
@@ -15,6 +16,7 @@ export default function ListTitle({ list, setNewListItemId }: ListTitleProps) {
   const [, listsDispatch] = useListsContext();
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const debounceTimeoutID = useRef<number | null>(null);
+  const [, setDBSyncState] = useDBSyncState();
 
   useResizeTextarea(textareaRef, list.listName);
 
@@ -27,7 +29,7 @@ export default function ListTitle({ list, setNewListItemId }: ListTitleProps) {
       placeholder="List Title"
       autoFocus={list.listName === ''}
       onKeyDown={
-        //Create new list if Enter is pressed without the shift key
+        //Create new list item if Enter is pressed without the shift key
         (e) => {
           console.log('onKeyDown firing');
           
@@ -35,6 +37,7 @@ export default function ListTitle({ list, setNewListItemId }: ListTitleProps) {
             e.preventDefault();
             const newItemId = createId();
             const newTimestamp = Date.now();
+            setDBSyncState(false);
 
             listsDispatch({
               type: "item-added",
@@ -49,13 +52,16 @@ export default function ListTitle({ list, setNewListItemId }: ListTitleProps) {
               itemName: '',
               completed: false,
               timestamp: newTimestamp
-            });
+            })
+              .then(() => setDBSyncState(true));
 
             setNewListItemId(newItemId);
           }
         }
       }
       onChange={(e) => {
+        setDBSyncState(false);
+
         listsDispatch({
           type: "title-changed",
           listId: list.id,
@@ -73,7 +79,8 @@ export default function ListTitle({ list, setNewListItemId }: ListTitleProps) {
             id: list.id,
             listName: e.target.value,
             timestamp: Date.now()
-          });
+          })
+            .then(() => setDBSyncState(true));
         }, 500);
       }}
     />
