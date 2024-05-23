@@ -5,6 +5,7 @@ import styles from "./AllLists.module.scss";
 import { createDBList, deleteDBList } from '../../utils/indexeddb';
 import { createId } from "../../utils/general";
 import useDBSyncState from "../../hooks/useDBSyncState";
+import useDBError from "../../hooks/useDBError";
 
 
 type AllListsProps = {
@@ -15,6 +16,7 @@ type AllListsProps = {
 export default function AllLists({ onSetView, onSetCurrentListId }: AllListsProps) {
   const [todosLists, listsDispatch] = useListsContext();
   const [, setDBSyncState] = useDBSyncState();
+  const [, setDBError] = useDBError();
 
   const todosElements = todosLists.map((todosList) => {
     return (
@@ -64,7 +66,13 @@ export default function AllLists({ onSetView, onSetCurrentListId }: AllListsProp
           });
 
           createDBList({ id: newListId, listName: '', timestamp: newTimestamp })
-            .then(() => { setDBSyncState(true) });
+            .then(() => { setDBSyncState(true) })
+            .catch((result) => {
+              setDBError({
+                error: true,
+                message: result.message
+              });
+            });
 
           onSetCurrentListId(newListId);
           onSetView('singleList');
