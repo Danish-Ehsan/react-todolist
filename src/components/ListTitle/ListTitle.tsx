@@ -70,7 +70,7 @@ export default function ListTitle({ list, setNewListItemId }: ListTitleProps) {
 
         //Debounce database sync on user input
         if (debounceTimeoutID.current) {
-          clearInterval(debounceTimeoutID.current);
+          clearTimeout(debounceTimeoutID.current);
         }
 
         debounceTimeoutID.current = setTimeout(() => {
