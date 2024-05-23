@@ -1,0 +1,76 @@
+@import "../../styles/variables.scss";
+
+.ActionBar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ActionBtnWrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ActionBtnTitle {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0 0 0.2rem;
+}
+
+.ActionBtn {
+  width: 3rem;
+  height: 3rem;
+  padding: 0.5rem;
+  background: $buttonBackground;
+  border: none;
+  border-radius: 5px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  
+  svg {
+    width: 100%;
+    height: auto;
+  }
+}
+
+.Synced {
+  svg {
+    color: green;
+  }
+}
+
+.Syncing {
+  svg {
+    color: rgb(202, 202, 202);
+    animation: spin 1s ease infinite;
+  }
+}
+
+.SyncError {
+  svg {
+    color: red;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.ActionMenuWrap {
+  position: absolute;
+  right: 0;
+  top: 100%;
+
+  background-color: $buttonBackground;
+  padding: 1rem;
+}

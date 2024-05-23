@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import styles from "./App.module.scss";
 import AllLists from "./components/AllLists/AllLists";
 import List from "./components/List/List";
+import ActionBar from "./components/Actions/ActionBar";
 import { ViewState } from "./types";
 import useListsContext from "./hooks/useListsContext";
 import { getDBLists } from './utils/indexeddb';
@@ -53,6 +54,7 @@ function App() {
   return (
     <main className={styles.appContainer}>
       <div className={styles.listWrapper}>
+        <ActionBar/>
         {view === "allLists" ? (
           <AllLists onSetView={setView} onSetCurrentListId={setCurrentListId} />
         ) : (
