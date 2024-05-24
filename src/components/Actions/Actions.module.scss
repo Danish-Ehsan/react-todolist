@@ -1,25 +1,25 @@
 @import "../../styles/variables.scss";
 
-.ActionBar {
+.actionBar {
   display: flex;
   justify-content: flex-end;
 }
 
-.ActionBtnWrap {
+.actionBtnWrap {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.ActionBtnTitle {
+.actionBtnTitle {
   font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
   margin: 0 0 0.2rem;
 }
 
-.ActionBtn {
+.actionBtn {
   width: 3rem;
   height: 3rem;
   padding: 0.5rem;
@@ -35,23 +35,24 @@
   svg {
     width: 100%;
     height: auto;
+    color: $lightgrey;
   }
 }
 
-.Synced {
+.synced {
   svg {
     color: green;
   }
 }
 
-.Syncing {
+.syncing {
   svg {
     color: rgb(202, 202, 202);
     animation: spin 1s ease infinite;
   }
 }
 
-.SyncError {
+.syncError {
   svg {
     color: red;
   }
@@ -66,7 +67,7 @@
   }
 }
 
-.ActionMenuWrap {
+.actionMenuWrap {
   position: absolute;
   right: 0;
   top: 100%;

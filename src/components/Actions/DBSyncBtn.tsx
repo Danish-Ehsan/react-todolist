@@ -16,14 +16,14 @@ export default function DBSyncBtn() {
 
   const btnIcon = DBError.error ? <IoMdClose/> : DBSyncState ? <IoMdCheckmark/> : <AiOutlineLoading/>;
   
-  let btnClasses = `${styles.ActionBtn} ${styles.DBSyncBtn}`;
+  let btnClasses = `${styles.actionBtn} ${styles.DBSyncBtn}`;
   let panelContent;
 
   if (DBError.error) {
-    btnClasses += ` ${styles.SyncError}`;
+    btnClasses += ` ${styles.syncError}`;
     
     panelContent = 
-      <div className={styles.ActionMenu}>
+      <div className={`${styles.actionMenu} ${styles.DBSyncMenu}`}>
         <p>There has been an error saving your lists. Click the button below to attempt to save again.</p>
         <button
           onClick={() => {
@@ -38,24 +38,24 @@ export default function DBSyncBtn() {
         </button>
       </div>
   } else if (DBSyncState) {
-    btnClasses += ` ${styles.Synced}`;
+    btnClasses += ` ${styles.synced}`;
 
     panelContent = 
-      <div className={styles.ActionMenu}>
+      <div className={`${styles.actionMenu} ${styles.DBSyncMenu}`}>
         <p>Your lists are saved.</p>
       </div>
   } else {
-    btnClasses += ` ${styles.Syncing}`;
+    btnClasses += ` ${styles.syncing}`;
 
     panelContent = 
-      <div className={styles.ActionMenu}>
+      <div className={`${styles.actionMenu} ${styles.DBSyncMenu}`}>
         <p>Your lists are attempting to save</p>
       </div>
   }
 
   return (
-    <div className={styles.ActionBtnWrap}>
-      <p id="sync-button-label" className={styles.ActionBtnTitle}>Saved</p>
+    <div className={styles.actionBtnWrap}>
+      <p id="sync-button-label" className={styles.actionBtnTitle}>Saved</p>
       <button
         aria-labelledby="sync-button-label"
         className={btnClasses}
