@@ -35,6 +35,15 @@ export default function ListItem({ listItem, listId, index, listIndex, setNewLis
     }
   }, [shouldAutoFocus]);
 
+  //Cleanup input debounce function timer on dismount
+  useEffect(() => {
+    return () => {
+      if (debounceTimeoutID.current) {
+        clearTimeout(debounceTimeoutID.current);
+      }
+    }
+  },[]);
+
   console.log({shouldAutoFocus});
 
   return (
@@ -74,7 +83,8 @@ export default function ListItem({ listItem, listId, index, listIndex, setNewLis
           (e) => {
             console.log('onKeyDown firing');
             console.log({index});
-            
+
+            //Create new list item if Enter is pressed without the shift key
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
               const newItemId = createId();
@@ -100,6 +110,27 @@ export default function ListItem({ listItem, listId, index, listIndex, setNewLis
                 .then(() => setDBSyncState(true));
 
               setNewListItemId(newItemId);
+            }
+
+            //Delete list if Backspace or Delete is pressed while the list item is empty
+            if (listItem.itemName === "" && e.key === 'Backspace' || e.key === 'Delete') {
+              e.preventDefault();
+              
+              listsDispatch({
+                type: 'item-removed',
+                listId: listId,
+                itemId: listItem.id
+              });
+
+              //If there are list items before the deleted one, pass focus to it
+              lists[listIndex].listItems.forEach((currentListItem, index) => {
+                if (currentListItem === listItem && index > 0 ) {
+                  setNewListItemId(lists[listIndex].listItems[index - 1].id);
+                }
+              });
+
+              deleteDBListItem(listItem.id)
+                .then(() => setDBSyncState(true));
             }
           }
         }
