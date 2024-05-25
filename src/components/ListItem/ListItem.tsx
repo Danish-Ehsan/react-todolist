@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { ListItem as ListItemType } from "../../types";
 import allListStyles from "../AllLists/AllLists.module.scss";
 import listStyles from "../List/List.module.scss";
@@ -14,17 +14,28 @@ type ListItemProps = {
   listItem: ListItemType;
   listId: number;
   index: number;
+  listIndex: number;
   setNewListItemId: React.Dispatch<React.SetStateAction<number | null>>;
   shouldAutoFocus: boolean;
 };
 
-export default function ListItem({ listItem, listId, index, setNewListItemId, shouldAutoFocus }: ListItemProps) {
+export default function ListItem({ listItem, listId, index, listIndex, setNewListItemId, shouldAutoFocus }: ListItemProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const debounceTimeoutID = useRef<number | null>(null);
-  const [, listsDispatch] = useListsContext();
+  const [lists, listsDispatch] = useListsContext();
   const [, setDBSyncState] = useDBSyncState();
 
+  //Resize text area height to fit text
   useResizeTextarea(textareaRef, listItem.itemName);
+
+  //Focus list item when shouldAutoFocus is first changed to true
+  useEffect(() => {
+    if (shouldAutoFocus && textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, [shouldAutoFocus]);
+
+  console.log({shouldAutoFocus});
 
   return (
     <div className={`${allListStyles.listRow} ${allListStyles["listRow--align-start"]}`} key={listItem.id.toString()}>
@@ -59,9 +70,7 @@ export default function ListItem({ listItem, listId, index, setNewListItemId, sh
         value={listItem.itemName} 
         className={`${listStyles.listTextarea} ${listStyles.listItem} ${listItem.completed ? listStyles["is-completed"] : ""}`} 
         rows={1} 
-        autoFocus={shouldAutoFocus}
         onKeyDown={
-          //Create new list item if Enter is pressed without the shift key
           (e) => {
             console.log('onKeyDown firing');
             console.log({index});

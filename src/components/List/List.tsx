@@ -23,9 +23,9 @@ export default function List({ listIndex, onSetView }: ListProps) {
 
   list.listItems.forEach((listItem, index) => {
     if (listItem.completed) {
-      completedListItemElems.push(<ListItem listItem={listItem} listId={list.id} index={index} setNewListItemId={setNewListItemId} shouldAutoFocus={listItem.id === newListItemId} key={listItem.id.toString()} />);
+      completedListItemElems.push(<ListItem listItem={listItem} listId={list.id} index={index} listIndex={listIndex} setNewListItemId={setNewListItemId} shouldAutoFocus={listItem.id === newListItemId} key={listItem.id.toString()} />);
     } else {
-      incompleteListItemElems.push(<ListItem listItem={listItem} listId={list.id} index={index} setNewListItemId={setNewListItemId} shouldAutoFocus={listItem.id === newListItemId} key={listItem.id.toString()} />);
+      incompleteListItemElems.push(<ListItem listItem={listItem} listId={list.id} index={index} listIndex={listIndex} setNewListItemId={setNewListItemId} shouldAutoFocus={listItem.id === newListItemId} key={listItem.id.toString()} />);
     }
   });
 
