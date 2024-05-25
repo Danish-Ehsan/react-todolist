@@ -1,4 +1,3 @@
-import { useState } from "react";
 import styles from "./Actions.module.scss";
 import { IoMdCheckmark, IoMdClose } from "react-icons/io";
 import { AiOutlineLoading } from "react-icons/ai";
@@ -8,8 +7,12 @@ import ActionMenuWindow from "./ActionMenuWindow";
 import { resyncDatabase } from "../../utils/indexeddb";
 import useListsContext from "../../hooks/useListsContext";
 
-export default function DBSyncBtn() {
-  const [isPanelOpen, setIsPanelOpen] = useState(false);
+type DBSyncBtnProps = {
+  isPanelOpen: boolean;
+  setActivePanel: React.Dispatch<React.SetStateAction<number | null>>;
+}
+
+export default function DBSyncBtn({ isPanelOpen, setActivePanel }: DBSyncBtnProps) {
   const [DBSyncState, setDBSyncState] = useDBSyncState();
   const [DBError, setDBError] = useDBError();
   const [lists] = useListsContext();
@@ -59,7 +62,7 @@ export default function DBSyncBtn() {
       <button
         aria-labelledby="sync-button-label"
         className={btnClasses}
-        onClick={() => setIsPanelOpen((value) => !value)}
+        onClick={() => setActivePanel(isPanelOpen ? null : 2)}
       >
         {btnIcon}
       </button>

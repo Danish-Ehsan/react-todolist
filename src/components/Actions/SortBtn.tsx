@@ -1,4 +1,3 @@
-import { useState } from "react";
 import useListsContext from "../../hooks/useListsContext";
 import ActionMenuWindow from "./ActionMenuWindow";
 import { ViewState } from "../../types";
@@ -8,22 +7,17 @@ import { BiSortAlt2 } from "react-icons/bi";
 type SortBtnProps = {
   appView: ViewState;
   currentListId: number | null;
+  isPanelOpen: boolean;
+  setActivePanel: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
 type SortDispatchType = 
   (orderby: 'name' | 'date', direction: 'asc' | 'desc') => void;
 
-export default function SortBtn({appView, currentListId}: SortBtnProps) {
+export default function SortBtn({appView, currentListId, isPanelOpen, setActivePanel}: SortBtnProps) {
   const [, listsDispatch] = useListsContext();
-  const [isPanelOpen, setIsPanelOpen] = useState(false);
 
   const sortDispatch: SortDispatchType = (orderby, direction) => {
-    // listsDispatch({
-    //   type: appView === 'singleList' ? "listitems-reordered" : "lists-reordered",
-    //   orderby: orderby,
-    //   direction: direction,
-    //   ...(appView === 'singleList' && { listId: currentListId })
-    // });
     if (appView === "allLists") {
       listsDispatch({
         type: "lists-reordered",
@@ -45,8 +39,8 @@ export default function SortBtn({appView, currentListId}: SortBtnProps) {
       <p id="sort-button-label" className={styles.actionBtnTitle}>Sort</p>
       <button
         aria-labelledby="sort-button-label"
-        className={`${styles.actionBtn} ${styles.SortBtn}`}
-        onClick={() => setIsPanelOpen((value) => !value)}
+        className={`${styles.actionBtn}`}
+        onClick={() => setActivePanel(isPanelOpen ? null : 1)}
       >
         <BiSortAlt2/>
       </button>
