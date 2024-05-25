@@ -11,7 +11,9 @@ type TodosAction =
   | { type: "item-removed"; listId: number; itemId: number; }
   | { type: "list-added"; listId: number; timestamp: number; }
   | { type: "item-added"; listId: number; itemId: number; timestamp: number; index?: number }
-  | { type: "item-marked"; listId: number; itemId: number; completed: boolean };
+  | { type: "item-marked"; listId: number; itemId: number; completed: boolean }
+  | { type: "lists-reordered", orderby: "name" | "date", direction: "asc" | "desc" }
+  | { type: "listitems-reordered", orderby: "name" | "date", direction: "asc" | "desc", listId: number };
 
 export const ListsContext = createContext<[AllTodoLists, React.Dispatch<TodosAction>] | null>(null);
 
@@ -170,6 +172,53 @@ function todosListReducer(todoLists: AllTodoLists, action: TodosAction): AllTodo
             ...list,
             listItems: newListItems,
           };
+        }
+      });
+
+      return newLists;
+    }
+    case "lists-reordered": {
+      const newLists = [...todoLists];
+      
+      newLists.sort((a, b) => {
+        const compareValue = action.orderby === "name" ? "listName" : "timestamp";
+
+        if (a[compareValue] > b[compareValue]) {
+          return (action.direction === "asc" ? 1 : -1);
+        }
+        if (a[compareValue] < b[compareValue]) {
+          return (action.direction === "asc" ? -1 : 1);
+        }
+        return 0;
+      });
+
+      return newLists;
+    }
+    case "listitems-reordered": {
+      const newLists = todoLists.map((list) => {
+        if (list.id === action.listId) {
+          const newListItems = [...list.listItems];
+
+          newListItems.sort((a, b) => {
+            const compareValue = action.orderby === "name" ? "itemName" : "timestamp";
+    
+            if (a[compareValue] > b[compareValue]) {
+              return (action.direction === "asc" ? 1 : -1);
+            }
+            if (a[compareValue] < b[compareValue]) {
+              return (action.direction === "asc" ? -1 : 1);
+            }
+            return 0;
+          });
+
+          const newList = {
+            ...list,
+            listItems: newListItems
+          }
+
+          return newList;
+        } else {
+          return list;
         }
       });
 

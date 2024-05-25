@@ -49,12 +49,12 @@ function App() {
       abortObj.abort = true;
     }
 
-  }, [listsDispatch]);
+  }, [listsDispatch, setDBSyncState]);
 
   return (
     <main className={styles.appContainer}>
       <div className={styles.listWrapper}>
-        <ActionBar/>
+        <ActionBar appView={view} currentListId={currentListId} />
         {view === "allLists" ? (
           <AllLists onSetView={setView} onSetCurrentListId={setCurrentListId} />
         ) : (
