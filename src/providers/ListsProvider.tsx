@@ -116,7 +116,7 @@ function todosListReducer(todoLists: AllTodoLists, action: TodosAction): AllTodo
         } else {
           let newListItems = [];
 
-          if (action.index) {
+          if (action.index !== undefined) {
             newListItems = [
               ...list.listItems.slice(0,action.index + 1),
               {
