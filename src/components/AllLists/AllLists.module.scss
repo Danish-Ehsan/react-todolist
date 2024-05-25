@@ -35,7 +35,8 @@
 }
 
 .trashIcon {
-  height: 1.8rem;
+  height: 2rem;
+  width: auto;
   fill: $lightgrey;
 }
 
@@ -45,7 +46,7 @@
   border-radius: 0;
   background-color: $appBackground;
   border: none;
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem 0.5rem;
 
   &--listItem {
     background-color: transparent;

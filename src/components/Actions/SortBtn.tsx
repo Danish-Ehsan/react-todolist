@@ -47,11 +47,11 @@ export default function SortBtn({appView, currentListId, isPanelOpen, setActiveP
       {
         isPanelOpen &&
         <ActionMenuWindow>
-          <div className={`${styles.ActionMenu} ${styles.SortMenu}`}>
-            <p className={styles.ActionBtnTitle}>Sort By Name</p>
-            <div className={styles.ActionBtnGroup}>
+          <div className={`${styles.actionMenu} ${styles.SortMenu}`}>
+            <p className={styles.actionBtnTitle}>Sort By Name</p>
+            <div className={styles.actionBtnGroup}>
               <button
-                className={styles.SortBtn}
+                className={styles.sortBtn}
                 onClick={() => {
                   sortDispatch('name', 'asc');
                 }}
@@ -59,7 +59,7 @@ export default function SortBtn({appView, currentListId, isPanelOpen, setActiveP
                 ASC
               </button>
               <button
-                className={styles.SortBtn}
+                className={styles.sortBtn}
                 onClick={() => {
                   sortDispatch('name', 'desc');
                 }}
@@ -67,10 +67,10 @@ export default function SortBtn({appView, currentListId, isPanelOpen, setActiveP
                 DESC
               </button>
             </div>
-            <p className={styles.ActionBtnTitle}>Sort By Date</p>
-            <div className={styles.ActionBtnGroup}>
+            <p className={styles.actionBtnTitle}>Sort By Date</p>
+            <div className={styles.actionBtnGroup}>
               <button
-                className={styles.SortBtn}
+                className={styles.sortBtn}
                 onClick={() => {
                   sortDispatch('date', 'asc');
                 }}
@@ -78,7 +78,7 @@ export default function SortBtn({appView, currentListId, isPanelOpen, setActiveP
                 ASC
               </button>
               <button
-                className={styles.SortBtn}
+                className={styles.sortBtn}
                 onClick={() => {
                   sortDispatch('date', 'desc');
                 }}

@@ -3,6 +3,7 @@ import { ListItem as ListItemType } from "../../types";
 import allListStyles from "../AllLists/AllLists.module.scss";
 import listStyles from "../List/List.module.scss";
 import TrashIcon from "../../assets/TrashIcon";
+import { TiDelete } from "react-icons/ti";
 import useResizeTextarea from "../../hooks/useResizeTextarea";
 import useListsContext from "../../hooks/useListsContext";
 import { createDBListItem, updateDBListItem, deleteDBListItem } from "../../utils/indexeddb";
@@ -133,7 +134,8 @@ export default function ListItem({ listItem, listId, index, setNewListItemId, sh
         }} 
         className={`${allListStyles.trashBtn} ${allListStyles["trashBtn--listItem"]}`}
       >
-        <TrashIcon className={allListStyles.trashIcon} />
+        {/* <TrashIcon className={allListStyles.trashIcon} /> */}
+        <TiDelete className={allListStyles.trashIcon}/>
       </button>
     </div>
   );

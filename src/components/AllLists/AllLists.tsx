@@ -1,6 +1,7 @@
 import useListsContext from "../../hooks/useListsContext";
 import { ViewState } from "../../types";
 import TrashIcon from "../../assets/TrashIcon";
+import { HiMiniTrash } from "react-icons/hi2";
 import styles from "./AllLists.module.scss";
 import { createDBList, deleteDBList } from '../../utils/indexeddb';
 import { createId } from "../../utils/general";
@@ -42,7 +43,8 @@ export default function AllLists({ onSetView, onSetCurrentListId }: AllListsProp
             .then(() => setDBSyncState(true));
         }} 
           className={styles.trashBtn}>
-          <TrashIcon className={styles.trashIcon} />
+          {/* <TrashIcon className={styles.trashIcon} /> */}
+          <HiMiniTrash className={styles.trashIcon} />
         </button>
       </div>
     );

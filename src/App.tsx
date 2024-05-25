@@ -53,8 +53,8 @@ function App() {
 
   return (
     <main className={styles.appContainer}>
+      <ActionBar appView={view} currentListId={currentListId} />
       <div className={styles.listWrapper}>
-        <ActionBar appView={view} currentListId={currentListId} />
         {view === "allLists" ? (
           <AllLists onSetView={setView} onSetCurrentListId={setCurrentListId} />
         ) : (
