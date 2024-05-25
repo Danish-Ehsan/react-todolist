@@ -8,7 +8,5 @@ export default function useListsContext() {
     throw new Error("useUserContext was used outside of its Provider");
   }
 
-  console.log(listsContext);
-
   return listsContext;
 }
