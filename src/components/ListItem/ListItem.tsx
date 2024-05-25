@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { ListItem as ListItemType } from "../../types";
 import allListStyles from "../AllLists/AllLists.module.scss";
 import listStyles from "../List/List.module.scss";
-import TrashIcon from "../../assets/TrashIcon";
+//import TrashIcon from "../../assets/TrashIcon";
 import { TiDelete } from "react-icons/ti";
 import useResizeTextarea from "../../hooks/useResizeTextarea";
 import useListsContext from "../../hooks/useListsContext";
