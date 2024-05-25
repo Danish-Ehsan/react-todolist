@@ -84,7 +84,8 @@ export default function ListItem({ listItem, listId, index, setNewListItemId, sh
                 listId: listId,
                 itemName: '',
                 completed: false,
-                timestamp: newTimestamp
+                timestamp: newTimestamp,
+                order: null
               })
                 .then(() => setDBSyncState(true));
 

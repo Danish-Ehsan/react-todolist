@@ -65,7 +65,7 @@ export default function AllLists({ onSetView, onSetCurrentListId }: AllListsProp
             timestamp: newTimestamp
           });
 
-          createDBList({ id: newListId, listName: '', timestamp: newTimestamp })
+          createDBList({ id: newListId, listName: '', timestamp: newTimestamp, order: todosLists.length })
             .then(() => { setDBSyncState(true) })
             .catch((result) => {
               setDBError({

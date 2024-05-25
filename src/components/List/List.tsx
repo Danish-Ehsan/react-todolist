@@ -55,7 +55,8 @@ export default function List({ listIndex, onSetView }: ListProps) {
               listId: list.id,
               itemName: '',
               completed: false,
-              timestamp: newTimestamp
+              timestamp: newTimestamp,
+              order: list.listItems.length
             })
               .then(() => setDBSyncState(true));
           }

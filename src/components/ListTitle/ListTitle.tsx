@@ -51,7 +51,8 @@ export default function ListTitle({ list, setNewListItemId }: ListTitleProps) {
               listId: list.id,
               itemName: '',
               completed: false,
-              timestamp: newTimestamp
+              timestamp: newTimestamp,
+              order: list.listItems.length
             })
               .then(() => setDBSyncState(true));
 

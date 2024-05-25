@@ -1,5 +1,6 @@
 import { createContext, useReducer } from "react";
 import { AllTodoLists } from "../types";
+import { reorderLists, reorderListItems } from "../utils/indexeddb";
 
 type ListsProviderProps = { children: React.ReactNode }
 
@@ -150,6 +151,11 @@ function todosListReducer(todoLists: AllTodoLists, action: TodosAction): AllTodo
         }
       });
 
+      //Trigger reorder of IndexedDB data if list item was inserted in the middle of the list
+      if (action.index !== undefined) {
+        reorderListItems(newLists, action.listId);
+      }
+
       return newLists;
     }
     case "item-marked": {
@@ -192,6 +198,9 @@ function todosListReducer(todoLists: AllTodoLists, action: TodosAction): AllTodo
         return 0;
       });
 
+      //Trigger reorder of IndexedDB data
+      reorderLists(newLists);
+
       return newLists;
     }
     case "listitems-reordered": {
@@ -221,6 +230,9 @@ function todosListReducer(todoLists: AllTodoLists, action: TodosAction): AllTodo
           return list;
         }
       });
+
+      //Trigger reorder of IndexedDB data
+      reorderListItems(newLists, action.listId);
 
       return newLists;
     }

@@ -8,27 +8,38 @@ interface ListDatabase extends DBSchema {
     key: number;
   };
   listItems: {
-    value: ListItem
+    value: ListItemStore;
     key: number;
     indexes: { listId: number };
   };
 }
 
-type ListStore = Omit<List, "listItems">;
+type ListStore = {
+  listName: string;
+  id: number;
+  timestamp: number;
+  order: number | null;
+}
 
-type SetList = {
+interface ListItemStore extends ListItem {
+  order: number | null;
+}
+
+type UpdateList = {
   id: number;
   listName?: string;
   timestamp?: number;
   listItems?: ListItem[];
+  order?: number;
 }
 
-type SetListItem = {
+type UpdateListItem = {
   id: number;
   listId?: number;
   itemName?: string;
   timestamp?: number;
   completed?: boolean;
+  order?: number;
 }
 
 type AbortObj = {
@@ -109,6 +120,9 @@ export async function getDBLists(abortObj:AbortObj): Promise<AllTodoLists | unde
         return;
       }
 
+      //Sort main lists array by order property
+      mainLists.sort(sortFunc);
+
       console.log(abortObj);
       console.log('getLists cursor open success');
 
@@ -116,6 +130,12 @@ export async function getDBLists(abortObj:AbortObj): Promise<AllTodoLists | unde
       await Promise.all(
         mainLists.map(async (list) => {
           const listItems = await listItemsIndex.getAll(list.id);
+
+          //Sort list items array by order property
+          listItems.sort(sortFunc);
+
+          console.log('listItems reordered:');
+          console.log(listItems);
 
           const newList: List = {
             ...list,
@@ -190,42 +210,48 @@ async function addMockData(db: IDBPDatabase<ListDatabase>) {
 
   await Promise.all([
     listsStore.add({
-      id: createId(),
+      id: 1,
       listName: 'Foo',
-      timestamp: 1714710594045
+      timestamp: 1714710594045,
+      order: 1
     }),
     listsStore.add({
-      id: createId(),
+      id: 2,
       listName: 'Bar',
-      timestamp: 1714710594046
+      timestamp: 1714710594046,
+      order: 2
     }),
     listsItemsStore.add({
       id: createId(),
       listId: 1,
       itemName: 'Foo Item one',
       timestamp: 1714710594047,
-      completed: false
+      completed: false,
+      order: 1
     }),
     listsItemsStore.add({
       id: createId(),
       listId: 1,
       itemName: 'Foo Item two',
       timestamp: 1714710594048,
-      completed: false
+      completed: false,
+      order: 2
     }),
     listsItemsStore.add({
       id: createId(),
       listId: 2,
       itemName: 'Bar Item one',
       timestamp: 1714710594049,
-      completed: false
+      completed: false,
+      order: 3
     }),
     listsItemsStore.add({
       id: createId(),
       listId: 2,
       itemName: 'Bar Item two',
       timestamp: 1714710594050,
-      completed: false
+      completed: false,
+      order: 4
     }),
   ])
     .then(() => console.log('Mock data added'))
@@ -235,6 +261,9 @@ async function addMockData(db: IDBPDatabase<ListDatabase>) {
 export async function createDBList(list: ListStore) {
   console.log('createDBList running');
   console.log(list);
+
+  //Test Error
+  //throw new Error('Test Error');
 
   try {
     const db = await getDatabase();
@@ -264,7 +293,7 @@ export async function createDBList(list: ListStore) {
   }
 }
 
-export async function updateDBList(list: SetList) {
+export async function updateDBList(list: UpdateList) {
   console.log('addList running');
   console.log(list);
 
@@ -286,7 +315,7 @@ export async function updateDBList(list: SetList) {
       const newList = {
         ...oldList,
         ...list
-      } as List
+      } as ListStore
 
       try {
         await listsStore.put(newList);
@@ -315,7 +344,7 @@ export async function updateDBList(list: SetList) {
   }
 }
 
-export async function createDBListItem(listItem: ListItem) {
+export async function createDBListItem(listItem: ListItemStore) {
   console.log('setListItem running');
   console.log(listItem);
 
@@ -344,7 +373,7 @@ export async function createDBListItem(listItem: ListItem) {
   }
 }
 
-export async function updateDBListItem(listItem: SetListItem) {
+export async function updateDBListItem(listItem: UpdateListItem) {
   console.log('setListItem running');
   console.log(listItem);
 
@@ -363,7 +392,7 @@ export async function updateDBListItem(listItem: SetListItem) {
     const newListItem = {
       ...oldListItem,
       ...listItem
-    } as ListItem
+    } as ListItemStore
 
     try {
       await listItemsStore.put(newListItem);
@@ -467,20 +496,26 @@ export async function resyncDatabase(lists: AllTodoLists) {
   console.log(lists);
 
   const mainLists: ListStore[] = [];
-  const allListItems: ListItem[] = [];
+  const allListItems: ListItemStore[] = [];
 
-  lists.forEach((list) => {
-    allListItems.push(...list.listItems);
-  });
-
-  lists.forEach((list) => {
+  lists.forEach((list, index) => {
     const newListObj: ListStore = {
       id: list.id,
       listName: list.listName,
-      timestamp: list.timestamp
+      timestamp: list.timestamp,
+      order: index
     }
 
     mainLists.push(newListObj);
+
+    list.listItems.forEach((listItem, index) => {
+      const newListItem: ListItemStore = {
+        ...listItem,
+        order: index
+      }
+
+      allListItems.push(newListItem);
+    });
   });
 
   try {
@@ -509,4 +544,72 @@ export async function resyncDatabase(lists: AllTodoLists) {
       console.error(`Database transaction error resyncing`);
     }
   }
+}
+
+export async function reorderLists(lists: AllTodoLists) {
+  try {
+    const db = await getDatabase();
+
+    const listsTransaction = db.transaction(['lists'], 'readwrite');
+    const listsStore = listsTransaction.objectStore('lists');
+
+    await Promise.all(
+      lists.map(async (list, index) => {
+        await listsStore.put({
+          ...list,
+          order: index
+        });
+      })
+    );
+  } catch(err) {
+    if (err instanceof Error) {
+      console.error(`Database error reordering main lists: ${err.message}`);
+    } else {
+      console.error(`Database error reordering main lists`);
+    }
+  }
+}
+
+export async function reorderListItems(lists: AllTodoLists, mainListId: number) {
+  try {
+    const db = await getDatabase();
+    
+    const listItemsTransaction = db.transaction(['listItems'], 'readwrite');
+    const listItemsStore = listItemsTransaction.objectStore('listItems');
+
+    const list = lists.filter((list) => list.id === mainListId);
+  
+    await Promise.all(
+      list[0].listItems.map(async (listItem, index) => {
+        await listItemsStore.put({
+          ...listItem,
+          order: index
+        })
+      })
+    );
+  } catch(err) {
+    if (err instanceof Error) {
+      console.error(`Database error reordering list items: ${err.message}`);
+    } else {
+      console.error(`Database error reordering list items`);
+    }
+  }
+}
+
+function sortFunc(a: ListStore | ListItemStore, b: ListStore | ListItemStore) {
+  if (a.order && b.order) {
+    if (a.order > b.order) {
+      return 1;
+    }
+    if (a.order < b.order) {
+      return -1;
+    }
+  }
+  if (a.order && !b.order) {
+    return 1;
+  }
+  if (!a.order && b.order) {
+    return -1;
+  }
+  return 0;
 }
