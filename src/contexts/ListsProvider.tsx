@@ -1,24 +1,12 @@
-import { createContext, useReducer } from "react";
+import { useReducer } from "react";
 import { AllTodoLists } from "../types";
 import { reorderLists, reorderListItems } from "../utils/indexeddb";
+import { TodosAction } from "../types";
+import ListsContext from "./ListsContext";
 
 type ListsProviderProps = { children: React.ReactNode }
 
-type TodosAction =
-  | { type: "lists-loaded"; lists: AllTodoLists; }
-  | { type: "title-changed"; listId: number; newTitle: string; }
-  | { type: "item-changed"; listId: number; newItemName: string; itemId: number; }
-  | { type: "list-removed"; listId: number; }
-  | { type: "item-removed"; listId: number; itemId: number; }
-  | { type: "list-added"; listId: number; timestamp: number; }
-  | { type: "item-added"; listId: number; itemId: number; timestamp: number; index?: number }
-  | { type: "item-marked"; listId: number; itemId: number; completed: boolean }
-  | { type: "lists-reordered", orderby: "name" | "date", direction: "asc" | "desc" }
-  | { type: "listitems-reordered", orderby: "name" | "date", direction: "asc" | "desc", listId: number };
-
-export const ListsContext = createContext<[AllTodoLists, React.Dispatch<TodosAction>] | null>(null);
-
-export function ListsProvider({ children }: ListsProviderProps) {
+export default function ListsProvider({ children }: ListsProviderProps) {
   const [todosList, dispatch] = useReducer(todosListReducer, []);
 
   return (

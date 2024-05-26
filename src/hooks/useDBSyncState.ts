@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { DBSyncStateContext } from "../providers/DBSyncStateProvider";
+import DBSyncStateContext from "../contexts/DBSyncStateContext";
 //import useDBError from "./useDBError";
 
 type DBSyncStateSetter = (value: React.SetStateAction<boolean>) => void;

@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { DBErrorContext } from "../providers/DBErrorProvider";
+import DBErrorContext from "../contexts/DBErrorContext";
 
 export default function useDBError() {
   const DBErrorState = useContext(DBErrorContext);

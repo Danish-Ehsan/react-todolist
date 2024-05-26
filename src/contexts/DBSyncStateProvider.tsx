@@ -1,10 +1,9 @@
-import { useState, createContext } from "react";
+import { useState } from "react";
+import DBSyncStateContext from "./DBSyncStateContext";
 
 type DBSyncStateProviderProps = { children: React.ReactNode }
 
-export const DBSyncStateContext = createContext<[boolean, React.Dispatch<React.SetStateAction<boolean>>] | null>(null);
-
-export function DBSyncStateProvider({ children }: DBSyncStateProviderProps) {
+export default function DBSyncStateProvider({ children }: DBSyncStateProviderProps) {
   const [ DBSyncState, setDBSyncState ] = useState(false);
 
   return (
