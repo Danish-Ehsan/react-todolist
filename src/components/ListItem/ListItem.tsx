@@ -148,7 +148,7 @@ export default function ListItem({ listItem, listId, index, listIndex, setNewLis
 
             //Debounce database sync on user input
             if (debounceTimeoutID.current) {
-              clearInterval(debounceTimeoutID.current);
+              clearTimeout(debounceTimeoutID.current);
             }
 
             debounceTimeoutID.current = setTimeout(() => {
